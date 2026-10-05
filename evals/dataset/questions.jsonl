@@ -1,0 +1,54 @@
+{"id": "q001", "question": "What factors decide whether a use of a copyrighted work is a fair use?", "gold_source_ids": ["usc-17:107"], "answerable": true}
+{"id": "q002", "question": "How long does copyright last for a work created by an individual author today?", "gold_source_ids": ["usc-17:302"], "answerable": true}
+{"id": "q003", "question": "Who owns the copyright in a work made for hire?", "gold_source_ids": ["usc-17:201"], "answerable": true}
+{"id": "q004", "question": "What range of statutory damages can a court award for copyright infringement?", "gold_source_ids": ["usc-17:504"], "answerable": true}
+{"id": "q005", "question": "Does a copyright have to be registered before the owner can sue for infringement?", "gold_source_ids": ["usc-17:411"], "answerable": true}
+{"id": "q006", "question": "Can an author terminate a copyright transfer after many years?", "gold_source_ids": ["usc-17:203"], "answerable": true}
+{"id": "q007", "question": "Can the owner of a lawfully made copy sell it without the copyright owner's permission?", "gold_source_ids": ["usc-17:109"], "answerable": true}
+{"id": "q008", "question": "What must an online service provider do to avoid liability for user-posted infringing material?", "gold_source_ids": ["usc-17:512"], "answerable": true}
+{"id": "q009", "question": "Is it illegal to circumvent technology that controls access to a copyrighted work?", "gold_source_ids": ["usc-17:1201"], "answerable": true}
+{"id": "q010", "question": "What kinds of works can be protected by copyright?", "gold_source_ids": ["usc-17:102"], "answerable": true}
+{"id": "q011", "question": "What exclusive rights does a copyright owner have?", "gold_source_ids": ["usc-17:106"], "answerable": true}
+{"id": "q012", "question": "When may libraries and archives make copies of copyrighted works?", "gold_source_ids": ["usc-17:108"], "answerable": true}
+{"id": "q013", "question": "How long after a claim accrues must a copyright civil action be brought?", "gold_source_ids": ["usc-17:507"], "answerable": true}
+{"id": "q014", "question": "Can the winning party in a copyright case recover attorney's fees?", "gold_source_ids": ["usc-17:505"], "answerable": true}
+{"id": "q015", "question": "What conditions must an invention meet to be considered novel for a patent?", "gold_source_ids": ["usc-35:102"], "answerable": true}
+{"id": "q016", "question": "When is an invention too obvious to be patented?", "gold_source_ids": ["usc-35:103"], "answerable": true}
+{"id": "q017", "question": "What kinds of inventions are eligible for a patent?", "gold_source_ids": ["usc-35:101"], "answerable": true}
+{"id": "q018", "question": "How many years does a patent term last from filing?", "gold_source_ids": ["usc-35:154"], "answerable": true}
+{"id": "q019", "question": "What counts as patent infringement?", "gold_source_ids": ["usc-35:271"], "answerable": true}
+{"id": "q020", "question": "How are damages calculated for patent infringement?", "gold_source_ids": ["usc-35:284"], "answerable": true}
+{"id": "q021", "question": "What must the specification of a patent application contain?", "gold_source_ids": ["usc-35:112"], "answerable": true}
+{"id": "q022", "question": "How does a provisional patent application work?", "gold_source_ids": ["usc-35:111"], "answerable": true}
+{"id": "q023", "question": "What is inter partes review of a patent?", "gold_source_ids": ["usc-35:311", "usc-35:314"], "answerable": true}
+{"id": "q024", "question": "How far back can damages be recovered for patent infringement?", "gold_source_ids": ["usc-35:286"], "answerable": true}
+{"id": "q025", "question": "When can a court award attorney fees in a patent case?", "gold_source_ids": ["usc-35:285"], "answerable": true}
+{"id": "q026", "question": "When does federal court have diversity jurisdiction based on the amount in controversy?", "gold_source_ids": ["usc-28:1332"], "answerable": true}
+{"id": "q027", "question": "When do federal district courts have original jurisdiction over federal questions?", "gold_source_ids": ["usc-28:1331"], "answerable": true}
+{"id": "q028", "question": "Which civil actions can a defendant remove from state court to federal court?", "gold_source_ids": ["usc-28:1441"], "answerable": true}
+{"id": "q029", "question": "Where is the proper venue for a civil action in federal court?", "gold_source_ids": ["usc-28:1391"], "answerable": true}
+{"id": "q030", "question": "In what situations can the Supreme Court review cases by writ of certiorari?", "gold_source_ids": ["usc-28:1254"], "answerable": true}
+{"id": "q031", "question": "Which district court decisions can be appealed to the courts of appeals?", "gold_source_ids": ["usc-28:1291"], "answerable": true}
+{"id": "q032", "question": "How many days does a defendant have to file a notice of removal?", "gold_source_ids": ["usc-28:1446"], "answerable": true}
+{"id": "q033", "question": "When can a federal court hear related state-law claims?", "gold_source_ids": ["usc-28:1367"], "answerable": true}
+{"id": "q034", "question": "What qualifications are required to serve as a federal juror?", "gold_source_ids": ["usc-28:1865"], "answerable": true}
+{"id": "q035", "question": "What debts are not discharged in a bankruptcy case?", "gold_source_ids": ["usc-11:523"], "answerable": true}
+{"id": "q036", "question": "What does the automatic stay do when a bankruptcy petition is filed?", "gold_source_ids": ["usc-11:362"], "answerable": true}
+{"id": "q037", "question": "Who is eligible to be a debtor under the bankruptcy code?", "gold_source_ids": ["usc-11:109"], "answerable": true}
+{"id": "q038", "question": "When can a trustee avoid a preferential transfer made before bankruptcy?", "gold_source_ids": ["usc-11:547"], "answerable": true}
+{"id": "q039", "question": "When can a trustee avoid a fraudulent transfer?", "gold_source_ids": ["usc-11:548"], "answerable": true}
+{"id": "q040", "question": "When is a Chapter 7 case dismissed for abuse under the means test?", "gold_source_ids": ["usc-11:707"], "answerable": true}
+{"id": "q041", "question": "What must a Chapter 13 plan provide?", "gold_source_ids": ["usc-11:1322"], "answerable": true}
+{"id": "q042", "question": "Which unsecured claims get priority in bankruptcy distribution?", "gold_source_ids": ["usc-11:507"], "answerable": true}
+{"id": "q043", "question": "What property can a debtor exempt from the bankruptcy estate?", "gold_source_ids": ["usc-11:522"], "answerable": true}
+{"id": "q044", "question": "What requirements must be met to confirm a Chapter 11 plan?", "gold_source_ids": ["usc-11:1129"], "answerable": true}
+{"id": "q045", "question": "What is the standard income tax deduction for a married couple filing jointly?", "gold_source_ids": [], "answerable": false}
+{"id": "q046", "question": "How many H-1B visas can be issued each year?", "gold_source_ids": [], "answerable": false}
+{"id": "q047", "question": "What is the federal minimum wage?", "gold_source_ids": [], "answerable": false}
+{"id": "q048", "question": "What is the test for trademark infringement under the Lanham Act?", "gold_source_ids": [], "answerable": false}
+{"id": "q049", "question": "What rights must police read to a suspect before questioning?", "gold_source_ids": [], "answerable": false}
+{"id": "q050", "question": "What is the legal blood alcohol limit for driving?", "gold_source_ids": [], "answerable": false}
+{"id": "q051", "question": "Who qualifies for Social Security retirement benefits?", "gold_source_ids": [], "answerable": false}
+{"id": "q052", "question": "What are the national ambient air quality standards under the Clean Air Act?", "gold_source_ids": [], "answerable": false}
+{"id": "q053", "question": "What penalties apply to insider trading under securities law?", "gold_source_ids": [], "answerable": false}
+{"id": "q054", "question": "What is the minimum age to marry in the United States?", "gold_source_ids": [], "answerable": false}

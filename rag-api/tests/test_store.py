@@ -43,7 +43,7 @@ def row(id, text):
 
 def test_roundtrip_and_upsert_idempotent():
     s = PgVectorStore(DSN, table="passages_test")
-    s.init()
+    s.init(reset=True)
     with psycopg.connect(DSN, autocommit=True) as c:
         c.execute("TRUNCATE passages_test")
     rows = [row("a", "apple"), row("b", "banana")]
@@ -53,3 +53,16 @@ def test_roundtrip_and_upsert_idempotent():
     hits = s.search_dense(vec(1), k=2)
     assert hits[0]["id"] == "b" and hits[0]["score"] == pytest.approx(1.0)
     assert hits[0]["source"]["url"] == "u"
+
+
+def test_lexical_ors_terms_and_ranks():
+    s = PgVectorStore(DSN, table="passages_test")
+    s.init(reset=True)
+    with psycopg.connect(DSN, autocommit=True) as c:
+        c.execute("TRUNCATE passages_test")
+    s.upsert(
+        [row("a", "apple pie recipe"), row("b", "banana bread"), row("c", "unrelated")],
+        [vec(0), vec(1), vec(2)],
+    )
+    hits = s.search_lexical("what is the apple banana situation", k=5)
+    assert {h["id"] for h in hits} == {"a", "b"}  # OR semantics; 'c' has no match

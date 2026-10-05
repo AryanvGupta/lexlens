@@ -7,8 +7,8 @@ down:    ## M6
 ingest:
 	docker compose up -d --wait postgres
 	set -a; . ./.env; set +a; cd rag-api && uv run python -m app.ingest
-eval:    ## M2
-	@echo "not implemented until M2"; exit 1
+eval:
+	set -a; . ./.env; set +a; cd rag-api && uv run python ../evals/run_eval.py
 
 test:
 	set -a; . ./.env 2>/dev/null; set +a; cd rag-api && uv run pytest
