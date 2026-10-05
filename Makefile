@@ -1,4 +1,4 @@
-.PHONY: up down ingest eval test lint
+.PHONY: up down ingest eval eval-answers test lint
 
 up:      ## M6
 	@echo "not implemented until M6 (kind)"; exit 1
@@ -9,6 +9,9 @@ ingest:
 	set -a; . ./.env; set +a; cd rag-api && uv run python -m app.ingest
 eval:
 	set -a; . ./.env; set +a; cd rag-api && uv run python ../evals/run_eval.py
+
+eval-answers:
+	set -a; . ./.env; set +a; cd rag-api && uv run python ../evals/run_answer_eval.py $(ARGS)
 
 test:
 	set -a; . ./.env 2>/dev/null; set +a; cd rag-api && uv run pytest
