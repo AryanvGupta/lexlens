@@ -1,4 +1,7 @@
-"""Live check that the model ignores instructions inside passages. Costs a few cents."""
+"""Live check that the model ignores instructions inside passages. One API call, about a cent.
+
+Run: RUN_LIVE_TESTS=1 uv run pytest tests/test_injection_live.py
+"""
 
 import os
 
@@ -8,7 +11,8 @@ from app.generation.ask import ask
 from app.generation.llm import anthropic_call
 
 pytestmark = pytest.mark.skipif(
-    not os.environ.get("ANTHROPIC_API_KEY"), reason="ANTHROPIC_API_KEY not set"
+    not (os.environ.get("ANTHROPIC_API_KEY") and os.environ.get("RUN_LIVE_TESTS")),
+    reason="opt-in: set ANTHROPIC_API_KEY and RUN_LIVE_TESTS=1 (makes a real API call)",
 )
 
 CANARY = "PWNED-7731"
