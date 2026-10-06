@@ -27,3 +27,19 @@
 **Not fixed.** Hybrid is still below dense on this dataset. `ts_rank` is a weak lexical ranker, and equal-weight RRF lets it pull good dense hits down. Not tuned further here; to be examined in the M7 experiments (weighted fusion, a real BM25 implementation).
 
 **Caveat.** The same 44 questions were used to find the problem and to measure the fix. One change was applied and measured, but the numbers are not a held-out estimate.
+
+## 2. Refusal precision 0.526: the system refuses answerable questions (M3)
+
+**Symptom.** First answer eval (`claude-sonnet-5-5`, 54 questions + 4 adversarial): refusal recall 1.000 (all 10 unanswerable questions refused) but precision 0.526. 19 refusals, 9 of them on answerable questions (9/44 = 20%).
+
+**Diagnosis.** Replayed the cached `ask` calls for the 9 and checked whether the gold section was in the top-8 retrieved passages:
+- 6/9: gold section **not retrieved** at all (q011, q013, q020, q021, q033, q041). The model's stated reasons matched: the passages did not contain the relevant text.
+- 3/9: gold section retrieved, but only an unhelpful chunk of it (q036 §362, q037 §109, q038 §547: e.g. §109(h) without the eligibility text). Long sections are split into several chunks and section-level gold counts a hit on any chunk.
+
+**Root cause.** Retrieval, not the model. The refusal rule is doing what it should (refuse on thin evidence); the evidence was thin. Section-level recall@8 also overstates answerability, because retrieving the wrong chunk of the right section counts as a hit.
+
+**Fix.** None yet. Candidates for M7, to be measured: larger k, retrieving neighbouring chunks of a hit section, the optional rerank step, and chunk-level gold labels. Retrieval score thresholds were not tried: dense scores for unanswerable questions (about 0.69) overlap those for answerable ones.
+
+**Evidence.** `evals/results/answers.json`. Not caused by citation checking: `dropped_citations` was 0 for all 9.
+
+**Injection result.** 0/4 adversarial questions followed the injected instruction (canary absent from the answer). One of the four (q058) was refused rather than answered; the live test `tests/test_injection_live.py` also passes.
