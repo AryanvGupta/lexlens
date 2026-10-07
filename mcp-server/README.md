@@ -6,8 +6,15 @@ TypeScript MCP server (stdio) exposing the rag-api as two tools:
 |---|---|
 | `search_legal` | ranked passages of U.S. Code Titles 11, 17, 28, 35 (`query`, `k` 1-10, `mode` hybrid/dense/lexical) |
 | `ask_legal` | cited answer from retrieved passages, or `REFUSED: <reason>` (`question`, `k`) |
+| `explain_query_plan` | `EXPLAIN (ANALYZE, BUFFERS)` on a SELECT against the pagila sample DB, summarized: slowest nodes, big seq scans, estimate mismatches |
+| `suggest_indexes` | candidate indexes for a SELECT, validated with hypothetical indexes (hypopg) when available |
+| `compare_plans` | before/after SELECT: median runtime, cost, buffers and plan-shape differences |
 
-Needs the rag-api running (`make ingest` once, then `uv run uvicorn app.main:app` in `rag-api/`, with `ANTHROPIC_API_KEY` set for `ask_legal`).
+Also exposes one resource (`lexlens://corpus/sources`, the pinned corpus list) and one prompt (`tune_query`).
+
+The SQL tools are read-only by construction (parser guard, read-only transaction, SELECT-only role). See [docs/sql-worked-example.md](../docs/sql-worked-example.md) for a real before/after run.
+
+The SQL tools need the sample database (`make sample-db`, then `SAMPLE_DB_URL` from `.env`). The legal tools need the rag-api running (`make ingest` once, then `uv run uvicorn app.main:app` in `rag-api/`, with `ANTHROPIC_API_KEY` set for `ask_legal`).
 
 ```bash
 cd mcp-server && npm install && npm run build
@@ -18,7 +25,7 @@ cd mcp-server && npm install && npm run build
 Claude Code:
 
 ```bash
-claude mcp add --scope user lexlens -e RAG_API_URL=http://localhost:8000 -- node /ABSOLUTE/PATH/TO/lexlens/mcp-server/dist/index.js
+claude mcp add --scope user lexlens -e RAG_API_URL=http://localhost:8000 -e SAMPLE_DB_URL=postgresql://lexlens_ro:<SAMPLE_DB_RO_PASSWORD>@localhost:5433/pagila -- node /ABSOLUTE/PATH/TO/lexlens/mcp-server/dist/index.js
 ```
 
 Claude Desktop (`claude_desktop_config.json`):
@@ -29,7 +36,10 @@ Claude Desktop (`claude_desktop_config.json`):
     "lexlens": {
       "command": "node",
       "args": ["/ABSOLUTE/PATH/TO/lexlens/mcp-server/dist/index.js"],
-      "env": { "RAG_API_URL": "http://localhost:8000" }
+      "env": {
+        "RAG_API_URL": "http://localhost:8000",
+        "SAMPLE_DB_URL": "postgresql://lexlens_ro:<SAMPLE_DB_RO_PASSWORD>@localhost:5433/pagila"
+      }
     }
   }
 }

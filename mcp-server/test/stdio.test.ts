@@ -16,7 +16,7 @@ test("real stdio: lists tools, and an unreachable backend gives a clean tool err
   await client.connect(transport);
   try {
     const { tools } = await client.listTools();
-    expect(tools.map((t) => t.name).sort()).toEqual(["ask_legal", "search_legal"]);
+    expect(tools.map((t) => t.name).sort()).toEqual(["ask_legal", "compare_plans", "explain_query_plan", "search_legal", "suggest_indexes"]);
     const out = await client.callTool({ name: "search_legal", arguments: { query: "fair use" } });
     expect(out.isError).toBe(true);
     expect(text(out)).toContain("unreachable");

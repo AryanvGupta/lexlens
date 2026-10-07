@@ -44,3 +44,14 @@ describe("RagClient error mapping", () => {
     expect(seen).toEqual({ url: "http://rag/search", body: { query: "fair use", k: 3, mode: "lexical" } });
   });
 });
+
+test("sources: GET /sources and shape check", async () => {
+  let method = "";
+  const f = (async (_u: string, init: RequestInit) => {
+    method = init.method as string;
+    return new Response(JSON.stringify({ sources: [{ id: "a", title: "A", url: "u" }] }));
+  }) as unknown as typeof fetch;
+  expect(await client(f).sources()).toEqual([{ id: "a", title: "A", url: "u" }]);
+  expect(method).toBe("GET");
+  await expect(client(json({})).sources()).rejects.toThrow(/unexpected response/);
+});

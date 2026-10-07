@@ -1,4 +1,4 @@
-.PHONY: up down ingest eval eval-answers test lint
+.PHONY: up down ingest sample-db eval eval-answers test lint
 
 up:      ## M6
 	@echo "not implemented until M6 (kind)"; exit 1
@@ -7,6 +7,9 @@ down:    ## M6
 ingest:
 	docker compose up -d --wait postgres
 	set -a; . ./.env; set +a; cd rag-api && uv run python -m app.ingest
+sample-db:
+	docker compose up -d --build --wait sample-db
+
 eval:
 	set -a; . ./.env; set +a; cd rag-api && uv run python ../evals/run_eval.py
 
@@ -15,7 +18,7 @@ eval-answers:
 
 test:
 	set -a; . ./.env 2>/dev/null; set +a; cd rag-api && uv run pytest
-	cd mcp-server && npm test
+	set -a; . ./.env 2>/dev/null; set +a; cd mcp-server && npm test
 
 lint:
 	cd rag-api && uv run ruff check . && uv run ruff format --check .

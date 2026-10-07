@@ -1,4 +1,8 @@
 import { RagError } from "../clients/rag.js";
+import { SqlToolError } from "../sql/db.js";
+import { GuardError } from "../sql/guard.js";
+
+const isSafe = (e: unknown) => e instanceof RagError || e instanceof SqlToolError || e instanceof GuardError;
 
 export const MAX_PASSAGE_CHARS = 800;
 
@@ -11,7 +15,7 @@ export async function guarded(run: () => Promise<string>) {
   try {
     return ok(await run());
   } catch (e) {
-    if (!(e instanceof RagError)) console.error(e); // stderr only; stdout is the protocol
-    return { isError: true as const, content: [{ type: "text" as const, text: e instanceof RagError ? e.message : "Unexpected error in lexlens MCP server" }] };
+    if (!isSafe(e)) console.error(e); // stderr only; stdout is the protocol
+    return { isError: true as const, content: [{ type: "text" as const, text: isSafe(e) ? (e as Error).message : "Unexpected error in lexlens MCP server" }] };
   }
 }

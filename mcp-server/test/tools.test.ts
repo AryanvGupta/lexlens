@@ -6,13 +6,14 @@ import { askResult, connect, passage, rejected, text } from "./helpers.js";
 const rag = (over: Partial<Rag> = {}): Rag => ({
   search: vi.fn(async () => [passage()]),
   ask: vi.fn(async () => askResult()),
+  sources: vi.fn(async () => []),
   ...over,
 });
 
 describe("tool registration", () => {
-  test("lists both tools with read-only annotations", async () => {
+  test("lists all tools with read-only annotations", async () => {
     const { tools } = await (await connect(rag())).listTools();
-    expect(tools.map((t) => t.name).sort()).toEqual(["ask_legal", "search_legal"]);
+    expect(tools.map((t) => t.name).sort()).toEqual(["ask_legal", "compare_plans", "explain_query_plan", "search_legal", "suggest_indexes"]);
     expect(tools.every((t) => t.annotations?.readOnlyHint === true)).toBe(true);
   });
 });

@@ -12,11 +12,17 @@ export interface AskResult {
   dropped_citations: number;
   retrieved: Passage[];
 }
+export interface Source {
+  id: string;
+  title: string;
+  url: string;
+}
 export type Mode = "dense" | "lexical" | "hybrid";
 
 export interface Rag {
   search(query: string, k: number, mode: Mode): Promise<Passage[]>;
   ask(question: string, k: number): Promise<AskResult>;
+  sources(): Promise<Source[]>;
 }
 
 /** Message is safe to show to an MCP client: short, no stack, no internals. */
@@ -32,13 +38,13 @@ export class RagClient implements Rag {
     private fetchFn: typeof fetch = fetch,
   ) {}
 
-  private async post<T>(path: string, body: unknown, timeoutMs: number): Promise<T> {
+  private async request<T>(method: "GET" | "POST", path: string, body: unknown, timeoutMs: number): Promise<T> {
     let res: Response;
     try {
       res = await this.fetchFn(`${this.baseUrl}${path}`, {
-        method: "POST",
+        method,
         headers: { "content-type": "application/json" },
-        body: JSON.stringify(body),
+        body: body === undefined ? undefined : JSON.stringify(body),
         signal: AbortSignal.timeout(timeoutMs),
       });
     } catch {
@@ -60,16 +66,22 @@ export class RagClient implements Rag {
   }
 
   async search(query: string, k: number, mode: Mode): Promise<Passage[]> {
-    const r = await this.post<{ results?: Passage[] }>("/search", { query, k, mode }, SEARCH_TIMEOUT_MS);
+    const r = await this.request<{ results?: Passage[] }>("POST", "/search", { query, k, mode }, SEARCH_TIMEOUT_MS);
     if (!Array.isArray(r.results)) throw new RagError("rag-api returned an unexpected response");
     return r.results;
   }
 
   async ask(question: string, k: number): Promise<AskResult> {
-    const r = await this.post<AskResult>("/ask", { question, k }, ASK_TIMEOUT_MS);
+    const r = await this.request<AskResult>("POST", "/ask", { question, k }, ASK_TIMEOUT_MS);
     if (typeof r.refused !== "boolean" || !Array.isArray(r.citations)) {
       throw new RagError("rag-api returned an unexpected response");
     }
     return r;
+  }
+
+  async sources(): Promise<Source[]> {
+    const r = await this.request<{ sources?: Source[] }>("GET", "/sources", undefined, SEARCH_TIMEOUT_MS);
+    if (!Array.isArray(r.sources)) throw new RagError("rag-api returned an unexpected response");
+    return r.sources;
   }
 }

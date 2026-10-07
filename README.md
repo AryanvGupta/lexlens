@@ -4,12 +4,13 @@ A RAG service over public U.S. Code text that answers with verified citations an
 
 Corpus: U.S. Code Titles 11 (Bankruptcy), 17 (Copyrights), 28 (Judiciary), 35 (Patents), 2023 edition, from govinfo.gov (public domain; see [docs/data-sources.md](docs/data-sources.md)). General information from statute text, not legal advice.
 
-**Status: work in progress.** Built so far: ingest, dense/lexical/hybrid retrieval, grounded `/ask`, evals, MCP server with `search_legal` and `ask_legal`. Not built yet: SQL-performance MCP tools, Kubernetes deployment, final write-up. `make up` and `make down` are placeholders. Eval results are in [evals/results/](evals/results/); known failures are logged in [docs/what-broke.md](docs/what-broke.md).
+**Status: work in progress.** Built so far: ingest, dense/lexical/hybrid retrieval, grounded `/ask`, evals, and an MCP server with `search_legal`, `ask_legal` and three read-only SQL-performance tools (`explain_query_plan`, `suggest_indexes`, `compare_plans`, see [docs/sql-worked-example.md](docs/sql-worked-example.md)). Not built yet: Kubernetes deployment, final write-up. `make up` and `make down` are placeholders. Eval results are in [evals/results/](evals/results/); known failures are logged in [docs/what-broke.md](docs/what-broke.md).
 
 ```
 MCP client --stdio--> mcp-server (TypeScript) --HTTP--> rag-api (FastAPI) --> Postgres + pgvector
-                                                              |
-                                                              +--> Anthropic API (answers only)
+                              |                                  |
+                              |                                  +--> Anthropic API (answers only)
+                              +--SQL (read-only role)--> sample-db (Postgres + pagila)
 ```
 
 ## Run it locally
@@ -58,7 +59,15 @@ curl -s localhost:8000/ask -H 'content-type: application/json' \
 
 `mode` is `hybrid` (default), `dense` or `lexical`. `/ask` returns `answer`, verified `citations`, `refused` and `reason`. An unanswerable question (try "What is the federal minimum wage?") comes back with `refused: true`.
 
-**4. Use it from an MCP client**
+**4. (Optional) Start the sample database for the SQL tools** (builds a Postgres 18 image with hypopg and loads [pagila](docs/data-sources.md); about 13 MB download, a minute or two)
+
+```bash
+make sample-db
+```
+
+Needs `SAMPLE_DB_ADMIN_PASSWORD`, `SAMPLE_DB_RO_PASSWORD` and `SAMPLE_DB_URL` in `.env` (see `.env.example`; the URL uses the read-only password and port 5433).
+
+**5. Use it from an MCP client**
 
 ```bash
 cd mcp-server && npm install && npm run build
@@ -76,7 +85,7 @@ cd mcp-server && npx @modelcontextprotocol/inspector node dist/index.js
 
 ```bash
 make lint          # ruff + tsc
-make test          # pytest + vitest (no API calls)
+make test          # pytest + vitest (no API calls; SQL live tests run only if sample-db is up)
 make eval          # retrieval eval: recall@k and MRR per mode; free, needs ingested corpus
 make eval-answers ARGS=--estimate   # cost estimate, no API calls
 make eval-answers  # answer eval: real API calls (about $1 with claude-sonnet-5-5), LLM calls cached on disk
@@ -92,8 +101,9 @@ Results are written to `evals/results/`. Models are configurable with `GEN_MODEL
 | `make ingest` fails to connect | Docker Desktop is not running, or `DATABASE_URL` password differs from `POSTGRES_PASSWORD`. If you changed the password after the first run, `docker compose down -v` resets the database volume. |
 | MCP tool says "rag-api is unreachable" | Step 3 is not running, or not on port 8000 (`RAG_API_URL` overrides it). |
 | `/ask` returns 503 "ANTHROPIC_API_KEY is not set" | Start the API after `set -a && . ./.env && set +a`. |
+| SQL tool says "SAMPLE_DB_URL is not set" or "unreachable" | Run `make sample-db`, and pass `SAMPLE_DB_URL` in the MCP client config (see mcp-server/README.md). |
 | MCP client shows no tools | `mcp-server/dist/` is missing: run `npm run build`. |
 
 ## License
 
-MIT. Data sources and terms: [docs/data-sources.md](docs/data-sources.md).
+MIT. Data sources and terms (U.S. Code via govinfo; Pagila, MIT): [docs/data-sources.md](docs/data-sources.md).

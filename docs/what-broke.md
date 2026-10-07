@@ -43,3 +43,17 @@
 **Evidence.** `evals/results/answers.json`. Not caused by citation checking: `dropped_citations` was 0 for all 9.
 
 **Injection result.** 0/4 adversarial questions followed the injected instruction (canary absent from the answer). One of the four (q058) was refused rather than answered; the live test `tests/test_injection_live.py` also passes.
+
+## 3. SQL guard ran after the database connection was opened (M5)
+
+**Symptom.** A vitest case written to prove "a rejected `DROP TABLE` never touches the database" failed: with no database configured, `explain_query_plan` answered "SAMPLE_DB_URL is not set" instead of "Only SELECT statements are allowed".
+
+**Diagnosis.** The failing assertion pointed straight at the call order: `explain_query_plan` and `suggest_indexes` called the guard inside `withReadOnlyTx`, after the connection and `BEGIN READ ONLY` had already happened. `compare_plans` already validated first.
+
+**Root cause.** Validation lived only in the shared `runExplain` helper, which is only reached once a transaction is open.
+
+**Fix.** Both tools now call `assertSingleSelect` before `withReadOnlyTx` (the helper still re-validates as defence in depth).
+
+**Evidence.** `mcp-server/test/sqlUnit.test.ts` "guard runs before the database is touched" failed before the change and passes after. Not exploitable as written (the transaction was read-only), but a rejected statement should never cost a connection.
+
+Also found while testing against a freshly rebuilt database: the planner picked a Bitmap scan where the earlier database had an Index Scan, which broke an over-specific plan-shape assertion. The test now asserts what matters (the `rental_date` index is used) rather than the scan node type.

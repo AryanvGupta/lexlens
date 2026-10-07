@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from app.config import DATABASE_URL
 from app.generation.ask import ask as run_ask
 from app.generation.llm import anthropic_call
+from app.ingest.fetch import sources as corpus_sources
 from app.retrieval.search import Mode
 from app.retrieval.search import search as run_search
 from app.store.pgvector_store import PgVectorStore
@@ -22,6 +23,11 @@ class SearchRequest(BaseModel):
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/sources")
+def sources():
+    return {"sources": corpus_sources()}
 
 
 @app.post("/search")

@@ -2,6 +2,7 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { AskResult, Passage, Rag } from "../src/clients/rag.js";
 import { buildServer } from "../src/index.js";
+import type { Sql } from "../src/sql/db.js";
 
 export const passage = (over: Partial<Passage> = {}): Passage => ({
   id: "usc-17:107:0",
@@ -21,9 +22,9 @@ export const askResult = (over: Partial<AskResult> = {}): AskResult => ({
   ...over,
 });
 
-export async function connect(rag: Rag) {
+export async function connect(rag: Rag, sql?: Sql) {
   const [a, b] = InMemoryTransport.createLinkedPair();
-  await buildServer(rag).connect(a);
+  await buildServer(rag, sql).connect(a);
   const client = new Client({ name: "test", version: "0" });
   await client.connect(b);
   return client;
