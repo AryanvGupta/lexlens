@@ -14,3 +14,9 @@ def test_agreement_beats_single_ranker():
 def test_score_formula():
     fused = rrf([[h("a")], [h("a")]], k=60)
     assert fused[0]["score"] == 2 / 61
+
+
+def test_weights_scale_each_ranker():
+    fused = rrf([[h("a")], [h("b")]], k=60, weights=(2, 1))
+    assert [x["id"] for x in fused] == ["a", "b"]  # 2/61 beats 1/61
+    assert fused[0]["score"] == 2 / 61 and fused[1]["score"] == 1 / 61

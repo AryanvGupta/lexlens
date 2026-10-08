@@ -100,6 +100,9 @@ class PoisonedStore:
     def search_lexical(self, q, k):
         return self._poison(self.store.search_lexical(q, k))
 
+    def search_bm25(self, q, k):
+        return self._poison(self.store.search_bm25(q, k))
+
 
 def pct(xs, p):
     xs = sorted(xs)

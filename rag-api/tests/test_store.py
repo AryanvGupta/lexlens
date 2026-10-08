@@ -66,3 +66,15 @@ def test_lexical_ors_terms_and_ranks():
     )
     hits = s.search_lexical("what is the apple banana situation", k=5)
     assert {h["id"] for h in hits} == {"a", "b"}  # OR semantics; 'c' has no match
+
+
+def test_bm25_ranks_by_term_and_loads_text():
+    s = PgVectorStore(DSN, table="passages_test")
+    s.init(reset=True)
+    s.upsert(
+        [row("a", "apple pie recipe"), row("b", "banana bread"), row("c", "unrelated")],
+        [vec(0), vec(1), vec(2)],
+    )
+    hits = s.search_bm25("what is the apple situation", k=5)
+    assert [h["id"] for h in hits] == ["a"]  # 'c' and 'b' have no matching term
+    assert hits[0]["text"] == "apple pie recipe" and hits[0]["score"] > 0

@@ -123,7 +123,7 @@ Results are written to `evals/results/`. Models are configurable with `GEN_MODEL
 
 ## Results
 
-Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions.jsonl) (44 answerable with section-level gold, 10 unanswerable, 4 adversarial). Retrieval numbers below were reproduced inside the kind cluster with `make eval`: all 12 metrics matched the committed values exactly.
+Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions.jsonl) (44 answerable with section-level gold, 10 unanswerable, 4 adversarial). Retrieval numbers below come from `make dev-eval`. The dense and lexical rows were reproduced inside the kind cluster with `make eval` (identical); the hybrid row changed after that run (see below) and has not been re-run in the cluster yet.
 
 **Retrieval** (44 answerable questions)
 
@@ -131,9 +131,9 @@ Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions
 |---|---|---|---|---|
 | dense | 0.750 | 0.920 | 0.955 | 0.830 |
 | lexical | 0.409 | 0.648 | 0.716 | 0.513 |
-| hybrid | 0.614 | 0.784 | 0.864 | 0.697 |
+| hybrid | 0.659 | 0.920 | 0.955 | 0.781 |
 
-Hybrid (RRF over dense + lexical) still scores below dense on this dataset and is not yet tuned; see [what broke #1](docs/what-broke.md). `/ask` defaults to hybrid.
+Hybrid is weighted reciprocal rank fusion of dense and BM25 at 2:1 (`lexical` mode is still Postgres `ts_rank`). An earlier equal-weight RRF over dense + `ts_rank` scored 0.614 / 0.784 / 0.864 / 0.697, below dense; the weights and BM25 were chosen from the sweep in [evals/results/experiments/fusion/summary.md](evals/results/experiments/fusion/summary.md), on the same 44 questions, so treat the gain as unconfirmed on unseen questions. Hybrid now matches dense at recall@5 and @10 but not at recall@1 or MRR. `/ask` defaults to hybrid.
 
 **Answers** (`claude-sonnet-5-5` at low effort, judge `claude-haiku-4-5`; 54 questions + 4 adversarial)
 

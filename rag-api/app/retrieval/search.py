@@ -6,15 +6,21 @@ from app.store.base import VectorStore
 Mode = Literal["dense", "lexical", "hybrid"]
 RRF_K = 60  # standard constant from the original RRF paper
 POOL = 50  # candidates taken from each ranker before fusion
+HYBRID_WEIGHTS = (
+    2,
+    1,
+)  # dense : BM25, from evals/fusion_experiment.py (docs/what-broke.md #2)
 
 
-def rrf(rankings: list[list[dict]], k: int = RRF_K) -> list[dict]:
-    """Reciprocal rank fusion: score(d) = sum over rankers of 1/(k + rank)."""
+def rrf(
+    rankings: list[list[dict]], k: int = RRF_K, weights: tuple[float, ...] | None = None
+) -> list[dict]:
+    """Weighted reciprocal rank fusion: score(d) = sum over rankers of w / (k + rank)."""
     scores: dict[str, float] = {}
     by_id: dict[str, dict] = {}
-    for ranking in rankings:
+    for ranking, w in zip(rankings, weights or (1,) * len(rankings)):
         for rank, hit in enumerate(ranking, start=1):
-            scores[hit["id"]] = scores.get(hit["id"], 0.0) + 1.0 / (k + rank)
+            scores[hit["id"]] = scores.get(hit["id"], 0.0) + w / (k + rank)
             by_id.setdefault(hit["id"], hit)
     return [
         {**by_id[i], "score": s}
@@ -32,7 +38,8 @@ def search(
     fused = rrf(
         [
             store.search_dense(embed_query(query), POOL),
-            store.search_lexical(query, POOL),
-        ]
+            store.search_bm25(query, POOL),
+        ],
+        weights=HYBRID_WEIGHTS,
     )
     return fused[:k]

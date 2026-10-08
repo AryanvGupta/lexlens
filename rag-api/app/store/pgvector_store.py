@@ -3,6 +3,7 @@ import psycopg
 from pgvector.psycopg import register_vector
 
 from app.config import EMBED_DIM
+from app.retrieval import bm25
 
 from .base import VectorStore
 
@@ -90,6 +91,27 @@ class PgVectorStore(VectorStore):
                 (query, k),
             )
             return [_hit(r) for r in cur.fetchall()]
+
+    def search_bm25(self, query, k):
+        idx = bm25.index(self.dsn, self.table, self.count())
+        with self._conn() as c:
+            terms = [
+                r[0]
+                for r in c.execute(
+                    "SELECT unnest(tsvector_to_array(to_tsvector('english', %s)))",
+                    (query,),
+                ).fetchall()
+            ]
+            top = bm25.rank(idx, terms, k)
+            rows = {
+                r[0]: r
+                for r in c.execute(
+                    "SELECT id, text, title, section, url, source_id, 0 "
+                    f"FROM {self.table} WHERE id = ANY(%s)",
+                    ([pid for pid, _ in top],),
+                ).fetchall()
+            }
+        return [_hit((*rows[pid][:6], score)) for pid, score in top]
 
     def count(self) -> int:
         with self._conn() as c:
