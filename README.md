@@ -27,7 +27,7 @@ make eval                # in-cluster Job: retrieval eval, then checks it reprod
 make forward             # rag-api on :8000, MCP on :3000 (Ctrl-C to stop)
 ```
 
-The secret is built from `.env` at deploy time by `make up` (`k8s/make-secret.sh`) and is never written to git. The `up`, `ingest`, `eval` and `forward` targets use the `kind-lexlens` kube context explicitly, so they never touch your current context. `make down` deletes the cluster.
+The secret is built from `.env` at deploy time by `make up` (`k8s/make-secret.sh`) and is never written to git. The `up`, `ingest`, `eval` and `forward` targets use the `kind-lexlens` kube context explicitly, so they never touch your current context. `make down` deletes the cluster. `k8s/verify-probes.sh` deletes a `rag-api` pod while polling the Service from inside the cluster, and passes only if every request returned 200 (the other replica kept serving, and the replacement got no traffic until it was Ready). It covers the startup and readiness probes, not the liveness probe or the single-replica `mcp-server`.
 
 With `make forward` running, connect an MCP client over HTTP:
 
