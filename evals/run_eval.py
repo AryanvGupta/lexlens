@@ -40,7 +40,8 @@ def main() -> None:
         misses[mode] = [
             q["id"] for q, i in rows if recall_at_k(i, q["gold_source_ids"], 10) < 1.0
         ]
-    res = ROOT / "evals/results"
+    res = Path(os.environ.get("EVAL_RESULTS", ROOT / "evals/results"))
+    res.mkdir(parents=True, exist_ok=True)
     (res / "retrieval.json").write_text(
         json.dumps(
             {"n": len(qs), "metrics": out, "not_fully_found_in_top10": misses}, indent=2

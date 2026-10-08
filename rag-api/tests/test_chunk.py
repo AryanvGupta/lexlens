@@ -37,3 +37,13 @@ def test_split_respects_limit_and_overlaps():
 def test_oversize_paragraph_hard_split():
     chunks = split_words([" ".join(["w"] * (MAX_WORDS * 2 + 10))])
     assert all(len(c.split()) <= MAX_WORDS for c in chunks) and len(chunks) >= 3
+
+
+def test_zero_overlap_does_not_repeat_text(monkeypatch):
+    import app.ingest.chunk as c
+
+    monkeypatch.setattr(c, "MAX_WORDS", 10)
+    monkeypatch.setattr(c, "OVERLAP_WORDS", 0)
+    words = [f"w{i}" for i in range(35)]
+    chunks = c.split_words([" ".join(words[:12]), " ".join(words[12:])])
+    assert " ".join(chunks).split() == words

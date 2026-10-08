@@ -1,10 +1,12 @@
+import os
 import re
 from dataclasses import dataclass
 
 from bs4 import BeautifulSoup
 
-MAX_WORDS = 300  # ~400 tokens, under bge-small's 512 limit
-OVERLAP_WORDS = 40
+# defaults: 300 words ~ 400 tokens, under bge-small's 512 limit; env-overridable for the chunking experiment
+MAX_WORDS = int(os.environ.get("CHUNK_WORDS", 300))
+OVERLAP_WORDS = int(os.environ.get("CHUNK_OVERLAP", 40))
 SEC_RE = re.compile(r"<!-- itempath:[^>]*?/Sec\. ([^>]+?) -->")
 
 
@@ -53,7 +55,7 @@ def split_words(paras: list[str]) -> list[str]:
             piece = words[i : i + step]
             if cur and len(cur) + len(piece) > MAX_WORDS:
                 chunks.append(" ".join(cur))
-                cur = cur[-OVERLAP_WORDS:]
+                cur = cur[max(0, len(cur) - OVERLAP_WORDS) :]  # not cur[-n:], which is the whole list at n=0
             cur.extend(piece)
     if cur:
         chunks.append(" ".join(cur))
