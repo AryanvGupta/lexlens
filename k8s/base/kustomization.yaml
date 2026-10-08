@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: lexlens
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - postgres.yaml
+  - sample-db.yaml
+  - rag-api.yaml
+  - mcp-server.yaml
+labels:
+  - pairs: { app.kubernetes.io/part-of: lexlens }

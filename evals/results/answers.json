@@ -41,5 +41,5 @@
   ],
   "llm_latency_p50_s": 3.8939929375774227,
   "llm_latency_p95_s": 6.98222879099194,
-  "cost_per_100_questions_usd": 1.3932810344827586
+  "cost_per_100_questions_usd": 1.3948948275862068
 }

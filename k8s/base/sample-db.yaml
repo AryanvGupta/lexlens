@@ -1,0 +1,56 @@
+# Postgres 18 + hypopg with pagila loaded on first start (image built from sample-db/).
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-db
+spec:
+  selector: { app: sample-db }
+  ports: [{ port: 5432, targetPort: 5432 }]
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sample-db
+spec:
+  serviceName: sample-db
+  replicas: 1
+  selector:
+    matchLabels: { app: sample-db }
+  template:
+    metadata:
+      labels: { app: sample-db }
+    spec:
+      containers:
+        - name: sample-db
+          image: lexlens/sample-db
+          ports: [{ containerPort: 5432 }]
+          env:
+            - { name: POSTGRES_USER, value: postgres }
+            - { name: POSTGRES_DB, value: pagila }
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: lexlens-secrets, key: SAMPLE_DB_ADMIN_PASSWORD } }
+            - name: SAMPLE_DB_RO_PASSWORD
+              valueFrom: { secretKeyRef: { name: lexlens-secrets, key: SAMPLE_DB_RO_PASSWORD } }
+          startupProbe: # pagila load on first start takes a minute or two
+            exec: { command: ["pg_isready", "-h", "127.0.0.1", "-U", "postgres", "-d", "pagila"] }
+            periodSeconds: 5
+            failureThreshold: 90
+          readinessProbe:
+            exec: { command: ["pg_isready", "-h", "127.0.0.1", "-U", "postgres", "-d", "pagila"] }
+            periodSeconds: 5
+          livenessProbe:
+            exec: { command: ["pg_isready", "-h", "127.0.0.1", "-U", "postgres", "-d", "pagila"] }
+            periodSeconds: 10
+            failureThreshold: 6
+          resources:
+            requests: { cpu: 100m, memory: 256Mi }
+            limits: { memory: 1Gi }
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/postgresql }
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests: { storage: 2Gi }

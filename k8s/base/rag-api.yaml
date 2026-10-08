@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rag-api
+spec:
+  selector: { app: rag-api }
+  ports: [{ port: 8000, targetPort: 8000 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rag-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: rag-api }
+  template:
+    metadata:
+      labels: { app: rag-api }
+    spec:
+      containers:
+        - name: rag-api
+          image: lexlens/rag-api
+          ports: [{ containerPort: 8000 }]
+          envFrom:
+            - configMapRef: { name: lexlens-config }
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: lexlens-secrets, key: POSTGRES_PASSWORD } }
+            - name: DATABASE_URL # $(VAR) expands from the env entries above it
+              value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)
+            - name: ANTHROPIC_API_KEY
+              valueFrom: { secretKeyRef: { name: lexlens-secrets, key: ANTHROPIC_API_KEY, optional: true } }
+          startupProbe: # embedding model load: gates the other probes
+            httpGet: { path: /ready, port: 8000 }
+            periodSeconds: 5
+            failureThreshold: 36
+          readinessProbe:
+            httpGet: { path: /ready, port: 8000 }
+            periodSeconds: 10
+            failureThreshold: 2
+          livenessProbe:
+            httpGet: { path: /health, port: 8000 }
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests: { cpu: 250m, memory: 1Gi }
+            limits: { memory: 2Gi }

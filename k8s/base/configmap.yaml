@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lexlens-config
+data:
+  POSTGRES_USER: lexlens
+  POSTGRES_DB: lexlens
+  EMBED_MODEL: BAAI/bge-small-en-v1.5
+  GEN_MODEL: claude-sonnet-5-5
+  GEN_EFFORT: low
+  JUDGE_MODEL: claude-haiku-4-5

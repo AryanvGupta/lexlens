@@ -11,6 +11,7 @@ dependencies = [
     "psycopg[binary]>=3.2",
     "sentence-transformers>=6.1.0",
     "uvicorn>=0.30",
+    "torch",
 ]
 
 [dependency-groups]
@@ -19,3 +20,12 @@ dev = ["pytest>=8", "httpx>=0.27", "ruff>=0.6"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+# Linux images: CPU-only torch (the default PyPI wheel pulls several GB of CUDA libraries, even on arm64).
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true

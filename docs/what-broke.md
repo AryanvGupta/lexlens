@@ -1,5 +1,7 @@
 # What broke
 
+Note: entries 1 to 3 predate the M6 rename of the make targets. `make eval` and `make ingest` in those entries are now `make dev-eval` and `make dev-ingest`; `make eval` and `make ingest` now run against the Kubernetes cluster.
+
 ## 1. Hybrid retrieval scored worse than dense (M2)
 
 **Symptom.** First `make eval` (44 answerable questions): hybrid (RRF over dense + lexical) was *below* dense, the opposite of what hybrid is supposed to do.

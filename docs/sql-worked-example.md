@@ -2,7 +2,7 @@
 
 Everything below is real output from the three MCP SQL tools (`explain_query_plan`, `suggest_indexes`, `compare_plans`) against the pagila sample database on one laptop (Postgres 18, pagila freshly loaded). Timings are machine-specific and the planner's choice of scan type can vary with table statistics, so rerun it yourself rather than expecting identical numbers. A single `explain_query_plan` run is noisy (the first call below took about twice as long as the psql run of the same query); `compare_plans` uses the median of three for that reason.
 
-Reproduce: `make sample-db`, `cd mcp-server && npm install && npm run build`, set `SAMPLE_DB_URL` (see `.env.example`), then call the tools from any MCP client (the `tune_query` prompt walks through this workflow), or run the live tests: `make test`.
+Reproduce: `make dev-sample-db`, `cd mcp-server && npm install && npm run build`, set `SAMPLE_DB_URL` (see `.env.example`), then call the tools from any MCP client (the `tune_query` prompt walks through this workflow), or run the live tests: `make test`.
 
 ## The query
 

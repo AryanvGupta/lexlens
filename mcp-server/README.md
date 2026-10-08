@@ -14,7 +14,7 @@ Also exposes one resource (`lexlens://corpus/sources`, the pinned corpus list) a
 
 The SQL tools are read-only by construction (parser guard, read-only transaction, SELECT-only role). See [docs/sql-worked-example.md](../docs/sql-worked-example.md) for a real before/after run.
 
-The SQL tools need the sample database (`make sample-db`, then `SAMPLE_DB_URL` from `.env`). The legal tools need the rag-api running (`make ingest` once, then `uv run uvicorn app.main:app` in `rag-api/`, with `ANTHROPIC_API_KEY` set for `ask_legal`).
+The SQL tools need the sample database (`make dev-sample-db`, or `make up` for the cluster; then `SAMPLE_DB_URL` from `.env`). The legal tools need the rag-api running (`make dev-ingest` once, then `uv run uvicorn app.main:app` in `rag-api/`, with `ANTHROPIC_API_KEY` set for `ask_legal`).
 
 ```bash
 cd mcp-server && npm install && npm run build

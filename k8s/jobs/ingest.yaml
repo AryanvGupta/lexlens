@@ -1,0 +1,29 @@
+# Applied by k8s/run-job.sh (make ingest). Reuses the rag-api image.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ingest
+  namespace: lexlens
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels: { app: ingest }
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: ingest
+          image: lexlens/rag-api:local
+          imagePullPolicy: Never
+          workingDir: /app/rag-api
+          command: ["python", "-m", "app.ingest"]
+          envFrom:
+            - configMapRef: { name: lexlens-config }
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: lexlens-secrets, key: POSTGRES_PASSWORD } }
+            - name: DATABASE_URL
+              value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)
+          resources:
+            requests: { cpu: 500m, memory: 1Gi }
+            limits: { memory: 3Gi }

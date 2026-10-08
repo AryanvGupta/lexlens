@@ -1,4 +1,4 @@
-"""Retrieval eval. Run via `make eval` (needs Postgres with ingested corpus)."""
+"""Retrieval eval. Run via `make dev-eval` (local compose DB) or `make eval` (in-cluster Job); needs an ingested corpus."""
 
 import json
 import os

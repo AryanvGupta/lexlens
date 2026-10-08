@@ -1,0 +1,15 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+**/.venv
+**/node_modules
+**/dist
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+data/raw
+evals/results/cache
+k8s
+docs

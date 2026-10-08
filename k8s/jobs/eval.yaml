@@ -1,0 +1,29 @@
+# Applied by k8s/run-job.sh (make eval). Reuses the rag-api image.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: eval
+  namespace: lexlens
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      labels: { app: eval }
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: eval
+          image: lexlens/rag-api:local
+          imagePullPolicy: Never
+          workingDir: /app/rag-api
+          command: ["sh", "-c", "python /app/evals/run_eval.py && echo --- JSON --- && cat /app/evals/results/retrieval.json"]
+          envFrom:
+            - configMapRef: { name: lexlens-config }
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom: { secretKeyRef: { name: lexlens-secrets, key: POSTGRES_PASSWORD } }
+            - name: DATABASE_URL
+              value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)
+          resources:
+            requests: { cpu: 500m, memory: 1Gi }
+            limits: { memory: 3Gi }
