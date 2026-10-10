@@ -8,11 +8,12 @@ const jsonRpcError = (code: number, message: string) => ({ jsonrpc: "2.0", error
 
 /**
  * Stateless streamable-HTTP MCP endpoint (a fresh server and transport per request).
- * Optional bearer auth: set MCP_AUTH_TOKEN (or pass authToken). Unset/empty = no auth, so
- * expose it only inside the cluster / via port-forward. /healthz is never authenticated.
+ * Optional bearer auth: pass authToken (index.ts passes MCP_AUTH_TOKEN). Empty = no auth, so
+ * expose it only inside the cluster / via port-forward. The environment is deliberately not read here, so a
+ * token in a developer's shell can never change what the tests see. /healthz is never authenticated.
  * Host-header validation is the DNS-rebinding guard from the SDK.
  */
-export function createHttpApp(makeServer: () => McpServer, allowedHosts: string[], authToken: string = process.env.MCP_AUTH_TOKEN ?? "") {
+export function createHttpApp(makeServer: () => McpServer, allowedHosts: string[], authToken = "") {
   const app = express();
   // Before host validation on purpose: kubelet probes send the pod IP as Host.
   app.get("/healthz", (_req, res) => void res.json({ status: "ok" }));

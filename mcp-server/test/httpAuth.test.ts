@@ -60,3 +60,20 @@ test("/healthz stays open without credentials", async () => {
 test("token never reaches console output", () => {
   expect(logged.join("\n")).not.toContain(TOKEN);
 });
+
+test("an ambient MCP_AUTH_TOKEN does not change createHttpApp's default (no auth)", async () => {
+  const prev = process.env.MCP_AUTH_TOKEN;
+  process.env.MCP_AUTH_TOKEN = "ambient-token-from-a-shell";
+  try {
+    const app = createHttpApp(() => buildServer(rag as never), ["127.0.0.1"]);
+    const srv = await new Promise<http.Server>((r) => { const s = app.listen(0, "127.0.0.1", () => r(s)); });
+    const port = (srv.address() as AddressInfo).port;
+    const client = new Client({ name: "ambient-test", version: "0" });
+    await client.connect(new StreamableHTTPClientTransport(new URL(`http://127.0.0.1:${port}/mcp`)));
+    expect((await client.listTools()).tools.length).toBeGreaterThan(0);
+    await client.close();
+    await new Promise((r) => srv.close(r));
+  } finally {
+    if (prev === undefined) delete process.env.MCP_AUTH_TOKEN; else process.env.MCP_AUTH_TOKEN = prev;
+  }
+});
