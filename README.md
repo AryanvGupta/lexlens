@@ -4,7 +4,7 @@ A RAG service over public U.S. Code text that answers with verified citations an
 
 Corpus: U.S. Code Titles 11 (Bankruptcy), 17 (Copyrights), 28 (Judiciary), 35 (Patents), 2023 edition, from govinfo.gov (public domain; see [docs/data-sources.md](docs/data-sources.md)). General information from statute text, not legal advice.
 
-**Status: work in progress.** Built so far: ingest, dense/lexical/hybrid retrieval, grounded `/ask`, evals, an MCP server (stdio and streamable HTTP) with `search_legal`, `ask_legal` and three read-only SQL-performance tools (`explain_query_plan`, `suggest_indexes`, `compare_plans`, see [docs/sql-worked-example.md](docs/sql-worked-example.md)), and a reproducible local Kubernetes deployment on kind. Not built yet: final write-up. Eval results are in [evals/results/](evals/results/) and summarized [below](#results); known failures are logged in [docs/what-broke.md](docs/what-broke.md).
+**Status: complete for its planned scope** (ingest, dense / BM25-hybrid / reranked retrieval, grounded `/ask` with verified citations and refusal, an MCP server over stdio and streamable HTTP with `search_legal`, `ask_legal` and three read-only SQL-performance tools, a reproducible local Kubernetes deployment on kind, and CI with a retrieval regression gate). Read [Limitations](#limitations) for what has not been verified. Eval results are in [evals/results/](evals/results/) and summarized [below](#results); every failure and fix is logged in [docs/what-broke.md](docs/what-broke.md). The SQL tools have a real before/after run in [docs/sql-worked-example.md](docs/sql-worked-example.md).
 
 ```
 MCP client --stdio or HTTP--> mcp-server (TypeScript) --HTTP--> rag-api (FastAPI) --> Postgres + pgvector
@@ -162,6 +162,26 @@ History of refusal precision: 0.526 with the first equal-weight hybrid (9 over-r
 | **rerank, k=12 (current default)** | 0.833 | 2 | 1.000 | $1.76 | 313 ms |
 
 One run per config on the same 44 questions, so differences of one question are noise; the latency column is warm on an M2 laptop; in the kind cluster rerank is about 1.8 s at p50 and hybrid 75 ms, which makes rerank roughly 45% of the 3.7 s LLM call there.
+
+## What broke (highlights)
+
+The full log, with symptoms, diagnosis, root cause, fix and evidence, is [docs/what-broke.md](docs/what-broke.md). Four entries:
+
+- **Hybrid retrieval scored below dense (M2).** The section heading was neither embedded nor in the full-text index. Embedding `title + text` lifted hybrid recall@5 from 0.659 to 0.784; replacing equal-weight RRF over `ts_rank` with weighted fusion of dense and BM25 later brought it to 0.920, equal to dense.
+- **The system refused answerable questions (M3).** Refusal precision was 0.526. Reading the model's own refusal reasons showed the answering passage was not being retrieved, so the refusal rule was fine and retrieval was the problem. A chunk-level probe predicted which questions a cross-encoder rerank at k=12 would fix, and the answer eval then confirmed it: precision 0.833.
+- **The SQL safety guard ran after the database connection opened (M5).** A test written to prove a rejected `DROP TABLE` never touches the database failed. The guard now runs first.
+- **The reranker could not load in the cluster, and `make up` kept the old image (M7).** The image baked in only one model and forbids downloads at startup, so the pods crash-looped on the startup probe while local tests passed. Both causes were fixed and the cluster checks re-run.
+
+## Limitations
+
+- **Scope.** Statute text from four Titles of the 2023 U.S. Code only: no case law, no regulations, no updates. General information, not legal advice.
+- **Evaluation.** 58 questions (44 answerable, 10 unanswerable, 4 adversarial) written by the author. The same questions were used to diagnose problems and to measure fixes, so the gains here are not held-out results, and each configuration was run once, with no variance estimate. One answerable question is about 2.3 points of refusal precision.
+- **Faithfulness is unvalidated.** It comes from an LLM judge that has not been compared with human labels; `evals/results/faithfulness_samples.csv` is waiting to be hand-labelled.
+- **Over-refusal remains.** Two of the 44 answerable questions are still refused: one because the question's wording does not match the statute's ("related state-law claims" vs "supplemental jurisdiction"), one because the answering chunk is outside the 30 candidates rerank sees.
+- **Retrieval trade-offs.** Hybrid still trails dense on recall@1 and MRR. Rerank improves answers but costs about 1.8 s per search in the cluster (compute-bound on this hardware) against 75 ms for hybrid.
+- **Deployment.** One-node local kind cluster, no authentication on the MCP HTTP endpoint, not production. Startup and readiness probes were verified by deleting a `rag-api` pod; the liveness probe and the single-replica `mcp-server` were not. A live `/ask` was not run inside the cluster (the answer eval runs locally), and `make up` was not tried on a machine without cached Docker images.
+- **Clients.** The HTTP MCP endpoint was tested with raw protocol calls and the SDK client in the test suite, and the stdio server with the SDK client. It has not been tried with Claude Code or Claude Desktop in this repo's tests.
+- **Corpus size.** 2,852 passages. A larger corpus is not expected to fix the remaining failures (the answering text is already in the corpus, and more documents add distractors), but that was not tested.
 
 ## Troubleshooting
 
