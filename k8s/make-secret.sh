@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 tmp=$(mktemp)
 chmod 600 "$tmp"
 trap 'rm -f "$tmp"' EXIT
-grep -E '^(POSTGRES_PASSWORD|SAMPLE_DB_ADMIN_PASSWORD|SAMPLE_DB_RO_PASSWORD|ANTHROPIC_API_KEY)=' .env > "$tmp" || true
+grep -E '^(POSTGRES_PASSWORD|SAMPLE_DB_ADMIN_PASSWORD|SAMPLE_DB_RO_PASSWORD|ANTHROPIC_API_KEY|MCP_AUTH_TOKEN)=' .env > "$tmp" || true
 for key in POSTGRES_PASSWORD SAMPLE_DB_ADMIN_PASSWORD SAMPLE_DB_RO_PASSWORD; do
   grep -qE "^$key=.+" "$tmp" || { echo "error: $key is missing or empty in .env (see .env.example)" >&2; exit 1; }
 done

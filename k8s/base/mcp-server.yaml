@@ -1,4 +1,4 @@
-# Streamable-HTTP MCP endpoint. No authentication: reach it with `kubectl port-forward`, do not expose it.
+# Streamable-HTTP MCP endpoint. Bearer auth only if MCP_AUTH_TOKEN is in lexlens-secrets; otherwise reach it with `kubectl port-forward`, do not expose it.
 apiVersion: v1
 kind: Service
 metadata:
@@ -30,6 +30,8 @@ spec:
             - { name: MCP_ALLOWED_HOSTS, value: "localhost,127.0.0.1,mcp-server,mcp-server.lexlens.svc.cluster.local" }
             - name: SAMPLE_DB_RO_PASSWORD
               valueFrom: { secretKeyRef: { name: lexlens-secrets, key: SAMPLE_DB_RO_PASSWORD } }
+            - name: MCP_AUTH_TOKEN
+              valueFrom: { secretKeyRef: { name: lexlens-secrets, key: MCP_AUTH_TOKEN, optional: true } }
             - name: SAMPLE_DB_URL
               value: postgresql://lexlens_ro:$(SAMPLE_DB_RO_PASSWORD)@sample-db:5432/pagila
           readinessProbe:
