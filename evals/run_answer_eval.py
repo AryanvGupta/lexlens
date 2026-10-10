@@ -26,7 +26,7 @@ from app.retrieval.search import search  # noqa: E402
 from app.store.pgvector_store import PgVectorStore  # noqa: E402
 
 RES = ROOT / "evals/results"
-CACHE = RES / "cache"  # git-ignored; shared by every config
+CACHE = Path(os.environ.get("EVAL_CACHE", RES / "cache"))  # git-ignored; shared by every config. Point other checkouts/replicates at a dir via EVAL_CACHE
 OUT = Path(os.environ.get("EVAL_RESULTS", RES))  # experiments write elsewhere, baseline stays untouched
 K = int(os.environ.get("ANSWER_K", DEFAULT_K))  # passages given to the model
 MODE = os.environ.get("ANSWER_MODE", DEFAULT_MODE)  # retrieval mode behind /ask
