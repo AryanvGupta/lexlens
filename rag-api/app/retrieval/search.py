@@ -3,7 +3,8 @@ from typing import Literal
 from app.ingest.embed import embed_query
 from app.store.base import VectorStore
 
-Mode = Literal["dense", "lexical", "hybrid"]
+Mode = Literal["dense", "lexical", "hybrid", "rerank"]
+RERANK_POOL = 30  # hybrid candidates the cross-encoder re-orders (mode="rerank")
 RRF_K = 60  # standard constant from the original RRF paper
 POOL = 50  # candidates taken from each ranker before fusion
 HYBRID_WEIGHTS = (
@@ -35,6 +36,10 @@ def search(
         return store.search_dense(embed_query(query), k)
     if mode == "lexical":
         return store.search_lexical(query, k)
+    if mode == "rerank":
+        from app.retrieval.rerank import rerank  # lazy: loads a second model
+
+        return rerank(query, search(store, query, max(k, RERANK_POOL)), k)
     fused = rrf(
         [
             store.search_dense(embed_query(query), POOL),

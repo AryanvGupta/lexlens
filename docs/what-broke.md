@@ -48,7 +48,18 @@ Note: entries 1 to 3 predate the M6 rename of the make targets. `make eval` and 
 - q018, q036, q037, q038: the gold *section* is retrieved (q018's §154 is rank 1) but not the chunk with the answer. The q018 reason says the passages lack the general 20-year term in §154(a)(2). Same class as the original 3, not a fusion regression: the old retrieval happened to include the right chunk. Section-level gold hides this.
 - q033 (§1367 "supplemental jurisdiction", asked as "related state-law claims"): vocabulary mismatch. Dense never ranks it in the top 50; BM25 has it at rank 16, and the 2:1 weights push it to rank 51 in the fused list (the old hybrid had it at 15). It was not in the top 8 under either hybrid.
 
-**Not tried yet.** Larger k, pulling neighbouring chunks of a hit section, the optional rerank step, and chunk-level gold labels. Score thresholds were not tried: dense scores for unanswerable questions (about 0.69) overlap those for answerable ones. Same 44 questions used to find and to measure the fix, so 0.667 is not a held-out estimate.
+**Rerank, tried (M7).** A cross-encoder over the top 30 hybrid candidates (`mode="rerank"`) gives recall@1 0.716 and MRR 0.823 vs hybrid 0.659 / 0.781 (`make dev-eval`). Section-level metrics cannot show whether it fixes the wrong-chunk failures, so `evals/chunk_probe.py` finds the chunk that holds the answering phrase and reports its rank (bold = inside the top 8 that `/ask` sees):
+
+| question | answering chunk | dense | hybrid | rerank |
+|---|---|---|---|---|
+| q018 | usc-35:154 chunk 0 | rank 30 | rank 11 | rank 10 |
+| q036 | usc-11:362 chunk 0 | rank 12 | rank 13 | rank 10 |
+| q037 | usc-11:109 chunks 0, 1 | **rank 3** | rank 18 | **rank 4** |
+| q038 | usc-11:547 chunk 0 | > 30 | > 30 | > 30 |
+
+Rerank rescues q037 (hybrid had it at rank 18), moves q018 and q036 to rank 10, and cannot reach q038 because it only re-orders the hybrid top 30. So rerank alone should remove at most 1 of the 5 remaining over-refusals at k=8; that prediction has not been confirmed with an answer eval. The probe's phrases were chosen by hand for four questions, so it is a diagnosis, not a benchmark. Rerank latency was not measured.
+
+**Not tried yet.** Larger k (the table suggests k of 12 would include q018 and q036 under rerank, at about 50% more prompt tokens), pulling neighbouring chunks of a hit section, and chunk-level gold labels. Score thresholds were not tried: dense scores for unanswerable questions (about 0.69) overlap those for answerable ones. Same 44 questions used to find and to measure the fix, so 0.667 is not a held-out estimate.
 
 **Evidence.** `evals/results/answers.json` (before: 9 over-refusals, precision 0.526; after: 5, 0.667). Not caused by citation checking: `dropped_citations` was 0 for all 9. The rerun made 97 new LLM calls (cache 95 -> 192); the pre-run estimate was about $0.87 and I did not measure the exact bill.
 

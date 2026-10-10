@@ -83,7 +83,7 @@ curl -s localhost:8000/ask -H 'content-type: application/json' \
   -d '{"question": "How many years does a patent term last from filing?"}'
 ```
 
-`mode` is `hybrid` (default), `dense` or `lexical`. `/ask` returns `answer`, verified `citations`, `refused` and `reason`. An unanswerable question (try "What is the federal minimum wage?") comes back with `refused: true`.
+`mode` is `hybrid` (default), `dense`, `lexical` or `rerank` (hybrid candidates re-ordered by a local cross-encoder; the model, about 90 MB, downloads on first use and is not pre-loaded, so the first request is slow; not exposed through the MCP tools). `/ask` returns `answer`, verified `citations`, `refused` and `reason`. An unanswerable question (try "What is the federal minimum wage?") comes back with `refused: true`.
 
 **4. (Optional) Start the sample database for the SQL tools** (builds a Postgres 18 image with hypopg and loads [pagila](docs/data-sources.md); about 13 MB download, a minute or two)
 
@@ -132,6 +132,9 @@ Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions
 | dense | 0.750 | 0.920 | 0.955 | 0.830 |
 | lexical | 0.409 | 0.648 | 0.716 | 0.513 |
 | hybrid | 0.659 | 0.920 | 0.955 | 0.781 |
+| rerank | 0.716 | 0.920 | 0.966 | 0.823 |
+
+`rerank` re-orders the top 30 hybrid candidates with `cross-encoder/ms-marco-MiniLM-L-6-v2`. It lifts recall@1 and MRR over hybrid but does not beat dense, and its latency has not been measured. A chunk-level probe (`evals/chunk_probe.py`) shows that on the four wrong-chunk failures it brings the answering chunk into the top 8 for one question, not the others (details in [what broke #2](docs/what-broke.md)).
 
 Hybrid is weighted reciprocal rank fusion of dense and BM25 at 2:1 (`lexical` mode is still Postgres `ts_rank`). An earlier equal-weight RRF over dense + `ts_rank` scored 0.614 / 0.784 / 0.864 / 0.697, below dense; the weights and BM25 were chosen from the sweep in [evals/results/experiments/fusion/summary.md](evals/results/experiments/fusion/summary.md), on the same 44 questions, so treat the gain as unconfirmed on unseen questions. Hybrid now matches dense at recall@5 and @10 but not at recall@1 or MRR. `/ask` defaults to hybrid.
 
