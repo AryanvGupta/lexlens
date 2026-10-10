@@ -12,7 +12,7 @@ export function registerAskLegal(server: McpServer, rag: Rag) {
         "Answer a question using only retrieved passages of U.S. Code Titles 11, 17, 28 and 35. Every citation quote is verified against the passage text. If the passages do not support an answer the result starts with REFUSED and a reason; that is a normal outcome, not an error. General information, not legal advice. Calls an LLM, so it is slower and costs more than search_legal.",
       inputSchema: {
         question: z.string().min(1).max(500).describe("The legal question"),
-        k: z.number().int().min(1).max(10).default(8).describe("Passages to retrieve as evidence"),
+        k: z.number().int().min(1).max(20).optional().describe("Passages to retrieve as evidence; omit to use the server default, which is the evaluated configuration"),
       },
       annotations: { readOnlyHint: true, openWorldHint: false },
     },

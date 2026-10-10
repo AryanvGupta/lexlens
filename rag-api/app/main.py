@@ -12,6 +12,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from app.config import DATABASE_URL
+from app.generation.ask import DEFAULT_K
 from app.generation.ask import ask as run_ask
 from app.generation.llm import anthropic_call
 from app.ingest.fetch import sources as corpus_sources
@@ -21,13 +22,15 @@ from app.store.pgvector_store import PgVectorStore
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 log = logging.getLogger("lexlens")
-_warm = threading.Event()  # set once the embedding model is loaded
+_warm = threading.Event()  # set once the embedding and rerank models are loaded
 
 
 def _warm_model() -> None:
     from app.ingest.embed import model
+    from app.retrieval.rerank import model as rerank_model
 
     model()
+    rerank_model()  # /ask defaults to rerank; loading it lazily would stall the first request
     _warm.set()
 
 
@@ -82,7 +85,7 @@ def health():
 def ready():
     reasons = []
     if not _warm.is_set():
-        reasons.append("embedding model not loaded")
+        reasons.append("models not loaded")
     try:
         with psycopg.connect(DATABASE_URL, connect_timeout=2) as c:
             c.execute("SELECT 1")
@@ -108,7 +111,7 @@ def search(req: SearchRequest):
 
 class AskRequest(BaseModel):
     question: str
-    k: int = 8
+    k: int = DEFAULT_K
 
 
 @app.post("/ask")

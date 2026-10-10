@@ -39,7 +39,13 @@ def _refusal(reason: str, passages: list[dict], dropped: int = 0) -> dict:
     }
 
 
-def ask(store, call, question: str, k: int = 8, mode: str = "hybrid") -> dict:
+# rerank at k=12 beat hybrid at k=8 on refusal precision (0.833 vs 0.667): docs/what-broke.md #2
+DEFAULT_K, DEFAULT_MODE = 12, "rerank"
+
+
+def ask(
+    store, call, question: str, k: int = DEFAULT_K, mode: str = DEFAULT_MODE
+) -> dict:
     passages = search(store, question, k, mode)
     r = call(
         model=GEN_MODEL,

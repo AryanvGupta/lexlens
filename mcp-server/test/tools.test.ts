@@ -80,6 +80,15 @@ describe("ask_legal", () => {
     expect(text(out)).toContain('[usc-17:107:0] (usc-17 §107. Fair use) "fair use of a copyrighted work"');
   });
 
+  test("k is forwarded only when the caller sets it", async () => {
+    const r = rag();
+    const c = await connect(r);
+    await c.callTool({ name: "ask_legal", arguments: { question: "q" } });
+    await c.callTool({ name: "ask_legal", arguments: { question: "q", k: 12 } });
+    expect(r.ask).toHaveBeenNthCalledWith(1, "q", undefined);
+    expect(r.ask).toHaveBeenNthCalledWith(2, "q", 12);
+  });
+
   test("mentions dropped citations", async () => {
     const c = await connect(rag({ ask: async () => askResult({ dropped_citations: 2 }) }));
     const out = await c.callTool({ name: "ask_legal", arguments: { question: "q" } });
@@ -97,7 +106,7 @@ describe("ask_legal", () => {
     ["empty question", { question: "" }],
     ["question too long", { question: "x".repeat(501) }],
     ["k = 0", { question: "q", k: 0 }],
-    ["k = 11", { question: "q", k: 11 }],
+    ["k = 21", { question: "q", k: 21 }],
   ])("rejects invalid input: %s", async (_n, args) => {
     const r = rag();
     expect(await rejected((await connect(r)).callTool({ name: "ask_legal", arguments: args }))).toBe(true);

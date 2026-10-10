@@ -31,7 +31,7 @@ def warm():
 def test_ready_503_until_model_is_loaded(monkeypatch):
     monkeypatch.setattr(main.psycopg, "connect", lambda *a, **k: _Conn())
     r = client.get("/ready")
-    assert r.status_code == 503 and "embedding model not loaded" in r.json()["reasons"]
+    assert r.status_code == 503 and "models not loaded" in r.json()["reasons"]
 
 
 def test_ready_503_when_database_down(monkeypatch, warm):

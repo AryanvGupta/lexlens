@@ -43,6 +43,17 @@ describe("RagClient error mapping", () => {
     await client(f).search("fair use", 3, "lexical");
     expect(seen).toEqual({ url: "http://rag/search", body: { query: "fair use", k: 3, mode: "lexical" } });
   });
+
+  test("ask omits k unless given, so the server default applies", async () => {
+    const bodies: unknown[] = [];
+    const f = (async (_url: string, init: RequestInit) => {
+      bodies.push(JSON.parse(init.body as string));
+      return new Response(JSON.stringify({ answer: "x", refused: false, citations: [], retrieved: [] }));
+    }) as unknown as typeof fetch;
+    await client(f).ask("q");
+    await client(f).ask("q", 12);
+    expect(bodies).toEqual([{ question: "q" }, { question: "q", k: 12 }]);
+  });
 });
 
 test("sources: GET /sources and shape check", async () => {

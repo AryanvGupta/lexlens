@@ -7,8 +7,9 @@ ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PROJECT_ENVIRONMENT=/opt/venv \
 WORKDIR /app/rag-api
 COPY rag-api/pyproject.toml rag-api/uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
-# Bake the embedding model into the image so pods never download it at startup.
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('BAAI/bge-small-en-v1.5')"
+# Bake both models into the image (HF_HUB_OFFLINE=1 below forbids downloads at startup).
+# Keep these names in sync with EMBED_MODEL and RERANK_MODEL in rag-api/app/config.py.
+RUN python -c "from sentence_transformers import CrossEncoder, SentenceTransformer; SentenceTransformer('BAAI/bge-small-en-v1.5'); CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')"
 COPY rag-api/app app
 COPY data/sources.json /app/data/sources.json
 COPY evals/run_eval.py /app/evals/run_eval.py

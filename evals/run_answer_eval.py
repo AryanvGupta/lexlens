@@ -17,6 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "rag-api"))
 
 from app.config import GEN_EFFORT, GEN_MODEL, JUDGE_MODEL  # noqa: E402
+from app.generation.ask import DEFAULT_K, DEFAULT_MODE  # noqa: E402
 from app.generation.ask import ask  # noqa: E402
 from app.generation.llm import anthropic_call  # noqa: E402
 from app.generation.prompt import SCHEMA, SYSTEM, build_user  # noqa: E402
@@ -27,8 +28,8 @@ from app.store.pgvector_store import PgVectorStore  # noqa: E402
 RES = ROOT / "evals/results"
 CACHE = RES / "cache"  # git-ignored; shared by every config
 OUT = Path(os.environ.get("EVAL_RESULTS", RES))  # experiments write elsewhere, baseline stays untouched
-K = int(os.environ.get("ANSWER_K", "8"))  # passages given to the model
-MODE = os.environ.get("ANSWER_MODE", "hybrid")  # retrieval mode behind /ask
+K = int(os.environ.get("ANSWER_K", DEFAULT_K))  # passages given to the model
+MODE = os.environ.get("ANSWER_MODE", DEFAULT_MODE)  # retrieval mode behind /ask
 PRICES = {  # USD per 1M tokens (input, output); cache discounts ignored
     "claude-sonnet-5-5": (2.0, 10.0),
     "claude-opus-5-5": (4.0, 20.0),

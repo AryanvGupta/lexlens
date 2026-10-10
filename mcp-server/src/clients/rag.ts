@@ -21,7 +21,7 @@ export type Mode = "dense" | "lexical" | "hybrid";
 
 export interface Rag {
   search(query: string, k: number, mode: Mode): Promise<Passage[]>;
-  ask(question: string, k: number): Promise<AskResult>;
+  ask(question: string, k?: number): Promise<AskResult>;
   sources(): Promise<Source[]>;
 }
 
@@ -71,8 +71,9 @@ export class RagClient implements Rag {
     return r.results;
   }
 
-  async ask(question: string, k: number): Promise<AskResult> {
-    const r = await this.request<AskResult>("POST", "/ask", { question, k }, ASK_TIMEOUT_MS);
+  async ask(question: string, k?: number): Promise<AskResult> {
+    const body = k === undefined ? { question } : { question, k };
+    const r = await this.request<AskResult>("POST", "/ask", body, ASK_TIMEOUT_MS);
     if (typeof r.refused !== "boolean" || !Array.isArray(r.citations)) {
       throw new RagError("rag-api returned an unexpected response");
     }

@@ -31,7 +31,7 @@ spec:
               value: postgresql://$(POSTGRES_USER):$(POSTGRES_PASSWORD)@postgres:5432/$(POSTGRES_DB)
             - name: ANTHROPIC_API_KEY
               valueFrom: { secretKeyRef: { name: lexlens-secrets, key: ANTHROPIC_API_KEY, optional: true } }
-          startupProbe: # embedding model load: gates the other probes
+          startupProbe: # embedding + rerank model load: gates the other probes
             httpGet: { path: /ready, port: 8000 }
             periodSeconds: 5
             failureThreshold: 36

@@ -83,7 +83,7 @@ curl -s localhost:8000/ask -H 'content-type: application/json' \
   -d '{"question": "How many years does a patent term last from filing?"}'
 ```
 
-`mode` is `hybrid` (default), `dense`, `lexical` or `rerank` (hybrid candidates re-ordered by a local cross-encoder; the model, about 90 MB, downloads on first use and is not pre-loaded, so the first request is slow; not exposed through the MCP tools). `/ask` returns `answer`, verified `citations`, `refused` and `reason`. An unanswerable question (try "What is the federal minimum wage?") comes back with `refused: true`.
+`/search` takes `mode`: `hybrid` (default), `dense`, `lexical` or `rerank` (hybrid candidates re-ordered by a local cross-encoder, not exposed through the MCP `search_legal` tool). `/ask` uses `rerank` with `k` = 12 unless you pass `k`; both models load at startup and `/ready` waits for them (in the cluster images both are baked in; locally the reranker, about 90 MB, downloads on first start). `/ask` returns `answer`, verified `citations`, `refused` and `reason`. An unanswerable question (try "What is the federal minimum wage?") comes back with `refused: true`.
 
 **4. (Optional) Start the sample database for the SQL tools** (builds a Postgres 18 image with hypopg and loads [pagila](docs/data-sources.md); about 13 MB download, a minute or two)
 
@@ -134,34 +134,34 @@ Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions
 | hybrid | 0.659 | 0.920 | 0.955 | 0.781 |
 | rerank | 0.716 | 0.920 | 0.966 | 0.823 |
 
-`rerank` re-orders the top 30 hybrid candidates with `cross-encoder/ms-marco-MiniLM-L-6-v2`. It lifts recall@1 and MRR over hybrid but does not beat dense, and its latency has not been measured. A chunk-level probe (`evals/chunk_probe.py`) shows that on the four wrong-chunk failures it brings the answering chunk into the top 8 for one question, not the others (details in [what broke #2](docs/what-broke.md)).
+`rerank` re-orders the top 30 hybrid candidates with `cross-encoder/ms-marco-MiniLM-L-6-v2`. It lifts recall@1 and MRR over hybrid but does not beat dense, and adds latency: 313 ms vs 57 ms for hybrid at p50 on a warm M2 laptop (`evals/search_latency.py`), but about 1.8 s vs 75 ms in the kind cluster (10 requests each through the Service, k=12; the Docker VM has 8 CPUs and the pod requests 250m). The cluster gap is not diagnosed. Section-level metrics hide its main benefit, which shows at chunk level and in the answer eval below (`evals/chunk_probe.py`, [what broke #2](docs/what-broke.md)).
 
 Hybrid is weighted reciprocal rank fusion of dense and BM25 at 2:1 (`lexical` mode is still Postgres `ts_rank`). An earlier equal-weight RRF over dense + `ts_rank` scored 0.614 / 0.784 / 0.864 / 0.697, below dense; the weights and BM25 were chosen from the sweep in [evals/results/experiments/fusion/summary.md](evals/results/experiments/fusion/summary.md), on the same 44 questions, so treat the gain as unconfirmed on unseen questions. Hybrid now matches dense at recall@5 and @10 but not at recall@1 or MRR. `/ask` defaults to hybrid.
 
-**Answers** (`claude-sonnet-5-5` at low effort, judge `claude-haiku-4-5`; 54 questions + 4 adversarial)
+**Answers** (the `/ask` default: rerank, k=12; `claude-sonnet-5-5` at low effort, judge `claude-haiku-4-5`; 54 questions + 4 adversarial)
 
 | metric | value |
 |---|---|
-| citation validity (verbatim-quote check) | 0.995 |
-| answers citing a gold section | 0.974 |
-| faithfulness (LLM judge) | 0.974 |
+| citation validity (verbatim-quote check) | 1.000 |
+| answers citing a gold section | 1.000 |
+| faithfulness (LLM judge) | 1.000 |
 | judge vs. human agreement | not yet measured |
-| refusal precision / recall | 0.667 / 1.000 |
+| refusal precision / recall | 0.833 / 1.000 |
 | injection followed | 0/4 |
-| LLM latency p50 / p95 | 3.4 s / 6.3 s |
-| cost per 100 questions (token-based) | $1.36 |
+| LLM latency p50 / p95 | 3.7 s / 6.1 s |
+| cost per 100 questions (token-based) | $1.76 |
 
-These are with the weighted-hybrid retrieval above; before it, refusal precision was 0.526 (9 over-refusals) and these rows read 0.994 / 0.943 / 0.971 / 3.9 s / 7.0 s / $1.39. Read the table with two caveats. Refusal precision is still weak: all 10 unanswerable questions are refused, but 5 of the 44 answerable ones are refused too (15 refusals, 10 correct). Four of those five retrieve the right section but not the chunk that answers the question, and one is a vocabulary mismatch; see [what broke #2](docs/what-broke.md). The retrieval change and the evaluation used the same questions, so these gains are not a held-out estimate. And faithfulness comes from an LLM judge that has not been checked against human labels yet, so treat 0.971 as unvalidated until `evals/results/faithfulness_samples.csv` is hand-labelled.
+History of refusal precision: 0.526 with the first equal-weight hybrid (9 over-refusals), 0.667 after weighted BM25 hybrid at k=8 (5), 0.833 with rerank at k=12 (2). Read the table with three caveats. Refusal precision is better but not solved: all 10 unanswerable questions are refused, but 2 of the 44 answerable ones are too (12 refusals, 10 correct): `q038` (the answering chunk is outside the 30 candidates rerank sees) and `q033` (the question's wording does not match the statute's; see [what broke #2](docs/what-broke.md)). The configuration was chosen and measured on the same questions, with one run each, so one question is 2.3 points of precision and these gains are not a held-out estimate. And faithfulness comes from an LLM judge that has not been checked against human labels yet, so treat the faithfulness number as unvalidated until `evals/results/faithfulness_samples.csv` is hand-labelled.
 
-**Rerank and larger k** (answer eval, not the default; `ANSWER_MODE` / `ANSWER_K` env vars, details and limits in [what broke #2](docs/what-broke.md))
+**How the default was chosen** (`ANSWER_MODE` / `ANSWER_K` env vars select a config, `EVAL_RESULTS` an output directory; details and limits in [what broke #2](docs/what-broke.md))
 
 | config | refusal precision | over-refused (of 44) | faithfulness | $/100 q | retrieval p50 |
 |---|---|---|---|---|---|
-| hybrid, k=8 (default) | 0.667 | 5 | 0.974 | $1.36 | 57 ms |
+| hybrid, k=8 (previous default) | 0.667 | 5 | 0.974 | $1.36 | 57 ms |
 | hybrid, k=12 | 0.667 | 5 | 0.923 | $1.72 | 57 ms |
-| rerank, k=12 | 0.833 | 2 | 1.000 | $1.76 | 313 ms |
+| **rerank, k=12 (current default)** | 0.833 | 2 | 1.000 | $1.76 | 313 ms |
 
-One run per config on the same 44 questions, so differences of one question are noise; retrieval latency is warm on an M2 laptop, not in the cluster.
+One run per config on the same 44 questions, so differences of one question are noise; the latency column is warm on an M2 laptop; in the kind cluster rerank is about 1.8 s at p50 and hybrid 75 ms, which makes rerank roughly 45% of the 3.7 s LLM call there.
 
 ## Troubleshooting
 

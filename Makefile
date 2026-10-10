@@ -12,6 +12,7 @@ up:
 	docker build -t lexlens/mcp-server:local mcp-server
 	docker build -t lexlens/sample-db:local sample-db
 	kind load docker-image --name $(CLUSTER) $(IMAGES)
+	-$(K) get deployment rag-api >/dev/null 2>&1 && $(K) rollout restart deployment/rag-api deployment/mcp-server  # fixed :local tag: running pods keep the old image otherwise
 	kubectl --context kind-$(CLUSTER) apply -f k8s/base/namespace.yaml
 	k8s/make-secret.sh
 	kubectl --context kind-$(CLUSTER) apply -k k8s/overlays/local
