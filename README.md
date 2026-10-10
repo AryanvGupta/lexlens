@@ -119,7 +119,7 @@ make dev-eval-answers   # answer eval: real API calls (about $1 with claude-sonn
 RUN_LIVE_TESTS=1 make test              # also runs the live prompt-injection test (one API call)
 ```
 
-Results are written to `evals/results/`. Models are configurable with `GEN_MODEL`, `GEN_EFFORT` and `JUDGE_MODEL` (defaults in `rag-api/app/config.py`). The answer eval is not run by `make eval` and has not been moved into the cluster.
+Results are written to `evals/results/`. Models are configurable with `GEN_MODEL`, `GEN_EFFORT` and `JUDGE_MODEL` (defaults in `rag-api/app/config.py`). The answer eval is not run by `make eval` and has not been moved into the cluster. CI (`.github/workflows/ci.yml`) runs lint, unit tests, gitleaks, and a retrieval regression gate: it ingests the corpus into a pgvector service, runs the retrieval eval, and fails if any metric drops more than 0.05 (about two questions) below the committed `evals/results/retrieval.json`. It needs no API key; the answer eval is not run in CI because it costs money.
 
 ## Results
 

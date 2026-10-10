@@ -20,6 +20,35 @@ jobs:
       - run: npm install
       - run: npm run lint
       - run: npm test
+  eval:
+    # retrieval regression gate: no API key, no cost. The answer eval is not run in CI because it spends money.
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env: { POSTGRES_USER: lexlens, POSTGRES_PASSWORD: ci, POSTGRES_DB: lexlens }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U lexlens" --health-interval 5s --health-retries 10
+    env:
+      DATABASE_URL: postgresql://lexlens:ci@localhost:5432/lexlens
+    defaults: { run: { working-directory: rag-api } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-${{ hashFiles('rag-api/app/config.py') }}
+      - uses: actions/cache@v4
+        with:
+          path: data/raw
+          key: corpus-${{ hashFiles('data/sources.json') }}
+      - run: uv sync
+      - run: uv run python -m app.ingest
+      - run: EVAL_RESULTS=/tmp/eval uv run python ../evals/run_eval.py
+      # one question is ~0.023 recall, so 0.05 tolerates float noise across CPUs but not a real regression
+      - run: python3 ../evals/compare.py /tmp/eval/retrieval.json --tol 0.05 --drops-only
   secrets:
     runs-on: ubuntu-latest
     steps:
