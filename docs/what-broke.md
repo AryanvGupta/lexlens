@@ -57,11 +57,23 @@ Note: entries 1 to 3 predate the M6 rename of the make targets. `make eval` and 
 | q037 | usc-11:109 chunks 0, 1 | **rank 3** | rank 18 | **rank 4** |
 | q038 | usc-11:547 chunk 0 | > 30 | > 30 | > 30 |
 
-Rerank rescues q037 (hybrid had it at rank 18), moves q018 and q036 to rank 10, and cannot reach q038 because it only re-orders the hybrid top 30. So rerank alone should remove at most 1 of the 5 remaining over-refusals at k=8; that prediction has not been confirmed with an answer eval. The probe's phrases were chosen by hand for four questions, so it is a diagnosis, not a benchmark. Rerank latency was not measured.
+Rerank rescues q037 (hybrid had it at rank 18), moves q018 and q036 to rank 10, and cannot reach q038 because it only re-orders the hybrid top 30. So rerank alone should remove at most 1 of the 5 remaining over-refusals at k=8; that prediction has not been confirmed with an answer eval. The probe's phrases were chosen by hand for four questions, so it is a diagnosis, not a benchmark. 
 
-**Not tried yet.** Larger k (the table suggests k of 12 would include q018 and q036 under rerank, at about 50% more prompt tokens), pulling neighbouring chunks of a hit section, and chunk-level gold labels. Score thresholds were not tried: dense scores for unanswerable questions (about 0.69) overlap those for answerable ones. Same 44 questions used to find and to measure the fix, so 0.667 is not a held-out estimate.
+**Rerank + larger k, answer eval (M7).** The table above predicted that rerank at k=12 would put q018, q036 and q037 into the top 12 and could not help q038. The answer eval (`ANSWER_MODE=rerank ANSWER_K=12 EVAL_RESULTS=... uv run python ../evals/run_answer_eval.py`; results in `evals/results/experiments/answers/`) confirmed that, with hybrid at k=12 as the control for the k effect:
 
-**Evidence.** `evals/results/answers.json` (before: 9 over-refusals, precision 0.526; after: 5, 0.667). Not caused by citation checking: `dropped_citations` was 0 for all 9. The rerun made 97 new LLM calls (cache 95 -> 192); the pre-run estimate was about $0.87 and I did not measure the exact bill.
+| config | refusal precision | over-refused | faithfulness | $/100 q | LLM p50 |
+|---|---|---|---|---|---|
+| hybrid, k=8 (current default) | 0.667 | q018 q033 q036 q037 q038 | 0.974 | $1.36 | 3.4 s |
+| hybrid, k=12 | 0.667 | q033 q035 q036 q037 q038 | 0.923 | $1.72 | 3.5 s |
+| rerank, k=12 | **0.833** | q033 q038 | 1.000 | $1.76 | 3.7 s |
+
+Rerank at k=12 removed exactly the three questions the probe predicted. q038 (answering chunk outside the top 30) and q033 (vocabulary mismatch, see above) remain. Larger k without rerank did not help: it fixed q018 but newly refused q035. Retrieval latency (`evals/search_latency.py`, warm, M2 laptop, not a CPU-limited pod): dense 30 ms, hybrid 57 ms, rerank 313 ms at p50 (359 ms p95), about 8% on top of the LLM call. Token cost per 100 questions rises about 30% with k=12.
+
+Limits: one run per config (the model is sampled once and then cached, so there is no variance estimate), 44 answerable questions where one question is 2.3 points of precision, and the same questions were used to diagnose and to measure. The prediction was written down before the run, which is the strongest evidence here that the mechanism is real, but this is not a held-out result. The `/ask` default has not been changed.
+
+**Not tried yet.** Pulling neighbouring chunks of a hit section, query rewriting for q033-style vocabulary gaps, and chunk-level gold labels. Score thresholds were not tried: dense scores for unanswerable questions (about 0.69) overlap those for answerable ones. Same 44 questions used to find and to measure the fix, so 0.667 is not a held-out estimate.
+
+**Evidence.** `evals/results/answers.json` (before: 9 over-refusals, precision 0.526; after: 5, 0.667). Not caused by citation checking: `dropped_citations` was 0 for all 9. The hybrid rerun made 97 new LLM calls (cache 95 -> 192; estimate about $0.87), the two k=12 runs 97 and 100 more (192 -> 389; estimate about $1.1 each, token-based about $2.0 together). I did not check the actual bill.
 
 **Injection result.** 0/4 adversarial questions followed the injected instruction (canary absent from the answer). One of the four (q058) was refused rather than answered; the live test `tests/test_injection_live.py` also passes.
 

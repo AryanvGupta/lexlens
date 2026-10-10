@@ -25,7 +25,10 @@ from app.retrieval.search import search  # noqa: E402
 from app.store.pgvector_store import PgVectorStore  # noqa: E402
 
 RES = ROOT / "evals/results"
-CACHE = RES / "cache"  # git-ignored
+CACHE = RES / "cache"  # git-ignored; shared by every config
+OUT = Path(os.environ.get("EVAL_RESULTS", RES))  # experiments write elsewhere, baseline stays untouched
+K = int(os.environ.get("ANSWER_K", "8"))  # passages given to the model
+MODE = os.environ.get("ANSWER_MODE", "hybrid")  # retrieval mode behind /ask
 PRICES = {  # USD per 1M tokens (input, output); cache discounts ignored
     "claude-sonnet-5-5": (2.0, 10.0),
     "claude-opus-5-5": (4.0, 20.0),
@@ -113,7 +116,7 @@ def estimate(store, qs):
     toks = [
         len(
             SYSTEM
-            + build_user(q["question"], search(store, q["question"], 8, "hybrid"))
+            + build_user(q["question"], search(store, q["question"], K, MODE))
         )
         / CHARS_PER_TOKEN
         for q in qs
@@ -143,7 +146,7 @@ def main() -> None:
         return estimate(store, qs)
     call = CachedCall()
 
-    rows = [(q, ask(store, call, q["question"])) for q in main_qs]
+    rows = [(q, ask(store, call, q["question"], K, MODE)) for q in main_qs]
     answered = [(q, o) for q, o in rows if not o["refused"]]
     kept = sum(len(o["citations"]) for _, o in answered)
     dropped = sum(o["dropped_citations"] for _, o in answered)
@@ -179,7 +182,11 @@ def main() -> None:
     followed = []
     for q in adv_qs:
         o = ask(
-            PoisonedStore(store, q["gold_source_ids"], q["inject"]), call, q["question"]
+            PoisonedStore(store, q["gold_source_ids"], q["inject"]),
+            call,
+            q["question"],
+            K,
+            MODE,
         )
         followed.append(
             {
@@ -189,10 +196,12 @@ def main() -> None:
             }
         )
 
-    samples = RES / "faithfulness_samples.csv"
+    OUT.mkdir(parents=True, exist_ok=True)
+    labels = RES / "faithfulness_samples.csv"  # hand labels live with the baseline
+    samples = OUT / "faithfulness_samples.csv"
     prior = (
-        {r["id"]: r["human_verdict"] for r in csv.DictReader(samples.open())}
-        if samples.exists()
+        {r["id"]: r["human_verdict"] for r in csv.DictReader(labels.open())}
+        if labels.exists()
         else {}
     )
     step = max(1, len(answered) // 12)
@@ -243,8 +252,8 @@ def main() -> None:
             "gen_model": GEN_MODEL,
             "effort": GEN_EFFORT,
             "judge_model": JUDGE_MODEL,
-            "k": 8,
-            "mode": "hybrid",
+            "k": K,
+            "mode": MODE,
         },
         "n_main": len(main_qs),
         "n_answered": len(answered),
@@ -263,13 +272,13 @@ def main() -> None:
         "llm_latency_p95_s": pct([c["latency_s"] for c in gen], 95),
         "cost_per_100_questions_usd": total_cost / (len(main_qs) + len(adv_qs)) * 100,
     }
-    (RES / "answers.json").write_text(json.dumps(out, indent=2) + "\n")
+    (OUT / "answers.json").write_text(json.dumps(out, indent=2) + "\n")
     agree_s = (
         f"{agree:.2f} on {len(labelled)} hand-labelled"
         if agree is not None
         else "not yet measured (label faithfulness_samples.csv)"
     )
-    md = f"""# Answer eval ({len(main_qs)} questions + {len(adv_qs)} adversarial; generation `{GEN_MODEL}` effort {GEN_EFFORT}, judge `{JUDGE_MODEL}`)
+    md = f"""# Answer eval ({len(main_qs)} questions + {len(adv_qs)} adversarial; generation `{GEN_MODEL}` effort {GEN_EFFORT}, judge `{JUDGE_MODEL}`, mode `{MODE}` k={K})
 
 | metric | value |
 |---|---|
@@ -282,7 +291,7 @@ def main() -> None:
 | LLM latency p50 / p95 | {out["llm_latency_p50_s"]:.1f}s / {out["llm_latency_p95_s"]:.1f}s |
 | cost per 100 questions (token-based) | ${out["cost_per_100_questions_usd"]:.2f} |
 """
-    (RES / "answers.md").write_text(md)
+    (OUT / "answers.md").write_text(md)
     print(md)
 
 

@@ -153,6 +153,16 @@ Hybrid is weighted reciprocal rank fusion of dense and BM25 at 2:1 (`lexical` mo
 
 These are with the weighted-hybrid retrieval above; before it, refusal precision was 0.526 (9 over-refusals) and these rows read 0.994 / 0.943 / 0.971 / 3.9 s / 7.0 s / $1.39. Read the table with two caveats. Refusal precision is still weak: all 10 unanswerable questions are refused, but 5 of the 44 answerable ones are refused too (15 refusals, 10 correct). Four of those five retrieve the right section but not the chunk that answers the question, and one is a vocabulary mismatch; see [what broke #2](docs/what-broke.md). The retrieval change and the evaluation used the same questions, so these gains are not a held-out estimate. And faithfulness comes from an LLM judge that has not been checked against human labels yet, so treat 0.971 as unvalidated until `evals/results/faithfulness_samples.csv` is hand-labelled.
 
+**Rerank and larger k** (answer eval, not the default; `ANSWER_MODE` / `ANSWER_K` env vars, details and limits in [what broke #2](docs/what-broke.md))
+
+| config | refusal precision | over-refused (of 44) | faithfulness | $/100 q | retrieval p50 |
+|---|---|---|---|---|---|
+| hybrid, k=8 (default) | 0.667 | 5 | 0.974 | $1.36 | 57 ms |
+| hybrid, k=12 | 0.667 | 5 | 0.923 | $1.72 | 57 ms |
+| rerank, k=12 | 0.833 | 2 | 1.000 | $1.76 | 313 ms |
+
+One run per config on the same 44 questions, so differences of one question are noise; retrieval latency is warm on an M2 laptop, not in the cluster.
+
 ## Troubleshooting
 
 | Symptom | Fix |
