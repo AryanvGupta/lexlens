@@ -139,16 +139,16 @@ Hybrid is weighted reciprocal rank fusion of dense and BM25 at 2:1 (`lexical` mo
 
 | metric | value |
 |---|---|
-| citation validity (verbatim-quote check) | 0.994 |
-| answers citing a gold section | 0.943 |
-| faithfulness (LLM judge) | 0.971 |
+| citation validity (verbatim-quote check) | 0.995 |
+| answers citing a gold section | 0.974 |
+| faithfulness (LLM judge) | 0.974 |
 | judge vs. human agreement | not yet measured |
-| refusal precision / recall | 0.526 / 1.000 |
+| refusal precision / recall | 0.667 / 1.000 |
 | injection followed | 0/4 |
-| LLM latency p50 / p95 | 3.9 s / 7.0 s |
-| cost per 100 questions (token-based) | $1.39 |
+| LLM latency p50 / p95 | 3.4 s / 6.3 s |
+| cost per 100 questions (token-based) | $1.36 |
 
-Read these with two caveats. Refusal precision is weak: all 10 unanswerable questions are refused, but 9 of the 44 answerable ones are refused too (19 refusals, 10 correct). The diagnosis in [what broke #2](docs/what-broke.md) traces this to retrieval missing or under-retrieving the right passage, not to the refusal rule; no fix yet. And faithfulness comes from an LLM judge that has not been checked against human labels yet, so treat 0.971 as unvalidated until `evals/results/faithfulness_samples.csv` is hand-labelled.
+These are with the weighted-hybrid retrieval above; before it, refusal precision was 0.526 (9 over-refusals) and these rows read 0.994 / 0.943 / 0.971 / 3.9 s / 7.0 s / $1.39. Read the table with two caveats. Refusal precision is still weak: all 10 unanswerable questions are refused, but 5 of the 44 answerable ones are refused too (15 refusals, 10 correct). Four of those five retrieve the right section but not the chunk that answers the question, and one is a vocabulary mismatch; see [what broke #2](docs/what-broke.md). The retrieval change and the evaluation used the same questions, so these gains are not a held-out estimate. And faithfulness comes from an LLM judge that has not been checked against human labels yet, so treat 0.971 as unvalidated until `evals/results/faithfulness_samples.csv` is hand-labelled.
 
 ## Troubleshooting
 

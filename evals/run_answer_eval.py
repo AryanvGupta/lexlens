@@ -256,6 +256,7 @@ def main() -> None:
         "human_labelled": len(labelled),
         "refusal_precision": prec,
         "refusal_recall": rec,
+        "over_refused": [q["id"] for q, _ in refused if q["answerable"]],
         "injection_followed": f"{n_adv_followed}/{len(followed)}",
         "injection_detail": followed,
         "llm_latency_p50_s": statistics.median(c["latency_s"] for c in gen),

@@ -26,7 +26,9 @@ Note: entries 1 to 3 predate the M6 rename of the make targets. `make eval` and 
 | lexical | 0.545 | 0.648 | 0.417 | 0.513 |
 | hybrid | 0.659 | 0.784 | 0.566 | 0.697 |
 
-**Not fixed.** Hybrid is still below dense on this dataset. `ts_rank` is a weak lexical ranker, and equal-weight RRF lets it pull good dense hits down. Not tuned further here; to be examined in the M7 experiments (weighted fusion, a real BM25 implementation).
+**Not fixed at M2.** Hybrid was still below dense on this dataset. `ts_rank` is a weak lexical ranker, and equal-weight RRF lets it pull good dense hits down.
+
+**Fixed in M7.** `evals/fusion_experiment.py` swept a fixed grid (BM25 vs `ts_rank`, dense weight 1, 2 or 3). Hybrid is now weighted RRF of dense + BM25 at 2:1: recall@5 0.784 -> 0.920 and recall@10 0.864 -> 0.955, equal to dense, but recall@1 (0.659 vs 0.750) and MRR (0.781 vs 0.830) stay below dense. Reproduce: `cd rag-api && uv run python ../evals/fusion_experiment.py` (results in `evals/results/experiments/fusion/`). The sweep and the measurement use the same 44 questions, and 3:1 scored marginally higher but sits at the edge of the grid, so the choice of 2:1 over dense-only is a judgment call, not a proven win.
 
 **Caveat.** The same 44 questions were used to find the problem and to measure the fix. One change was applied and measured, but the numbers are not a held-out estimate.
 
@@ -40,9 +42,15 @@ Note: entries 1 to 3 predate the M6 rename of the make targets. `make eval` and 
 
 **Root cause.** Retrieval, not the model. The refusal rule is doing what it should (refuse on thin evidence); the evidence was thin. Section-level recall@8 also overstates answerability, because retrieving the wrong chunk of the right section counts as a hit.
 
-**Fix.** None yet. Candidates for M7, to be measured: larger k, retrieving neighbouring chunks of a hit section, the optional rerank step, and chunk-level gold labels. Retrieval score thresholds were not tried: dense scores for unanswerable questions (about 0.69) overlap those for answerable ones.
+**Fix (partial, M7).** The hybrid fusion change in entry 1: `/ask` defaults to hybrid, and the old hybrid retrieved the gold section for 0 of the 6 retrieval misses (dense alone: 4 of 6). After the change, refusal precision went 0.526 -> 0.667 with recall unchanged at 1.000, and over-refusals went 9 -> 5 (recorded as `over_refused` in `answers.json`). Fixed: q011, q013, q020, q021, q041. Still refused: q033, q036, q037, q038. Newly refused: q018.
 
-**Evidence.** `evals/results/answers.json`. Not caused by citation checking: `dropped_citations` was 0 for all 9.
+**Why 5 remain.** Checked with the model's cached refusal reasons and the gold rank per ranker:
+- q018, q036, q037, q038: the gold *section* is retrieved (q018's §154 is rank 1) but not the chunk with the answer. The q018 reason says the passages lack the general 20-year term in §154(a)(2). Same class as the original 3, not a fusion regression: the old retrieval happened to include the right chunk. Section-level gold hides this.
+- q033 (§1367 "supplemental jurisdiction", asked as "related state-law claims"): vocabulary mismatch. Dense never ranks it in the top 50; BM25 has it at rank 16, and the 2:1 weights push it to rank 51 in the fused list (the old hybrid had it at 15). It was not in the top 8 under either hybrid.
+
+**Not tried yet.** Larger k, pulling neighbouring chunks of a hit section, the optional rerank step, and chunk-level gold labels. Score thresholds were not tried: dense scores for unanswerable questions (about 0.69) overlap those for answerable ones. Same 44 questions used to find and to measure the fix, so 0.667 is not a held-out estimate.
+
+**Evidence.** `evals/results/answers.json` (before: 9 over-refusals, precision 0.526; after: 5, 0.667). Not caused by citation checking: `dropped_citations` was 0 for all 9. The rerun made 97 new LLM calls (cache 95 -> 192); the pre-run estimate was about $0.87 and I did not measure the exact bill.
 
 **Injection result.** 0/4 adversarial questions followed the injected instruction (canary absent from the answer). One of the four (q058) was refused rather than answered; the live test `tests/test_injection_live.py` also passes.
 
