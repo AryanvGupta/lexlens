@@ -4,7 +4,7 @@ from typing import Literal
 from app.ingest.embed import embed_query
 from app.store.base import VectorStore
 
-Mode = Literal["dense", "lexical", "hybrid", "rerank"]
+Mode = Literal["dense", "lexical", "hybrid", "rerank", "rewrite"]
 # hybrid candidates the cross-encoder re-orders (mode="rerank"); cost is roughly linear in this
 RERANK_POOL = int(os.environ.get("RERANK_POOL", "30"))
 RRF_K = 60  # standard constant from the original RRF paper
@@ -42,6 +42,10 @@ def search(
         from app.retrieval.rerank import rerank  # lazy: loads a second model
 
         return rerank(query, search(store, query, max(k, RERANK_POOL)), k)
+    if mode == "rewrite":
+        from app.retrieval.rewrite import search_rewrite  # lazy: imports search
+
+        return search_rewrite(store, query, k)
     fused = rrf(
         [
             store.search_dense(embed_query(query), POOL),
