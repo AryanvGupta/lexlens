@@ -134,19 +134,19 @@ Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions
 | hybrid | 0.659 | 0.920 | 0.955 | 0.781 |
 | rerank | 0.716 | 0.920 | 0.966 | 0.823 |
 
-`rerank` re-orders the top 30 hybrid candidates with `cross-encoder/ms-marco-MiniLM-L-6-v2`. It lifts recall@1 and MRR over hybrid but does not beat dense, and adds latency: 313 ms vs 57 ms for hybrid at p50 on a warm M2 laptop (`evals/search_latency.py`), but about 1.8 s vs 75 ms in the kind cluster (10 requests each through the Service, k=12; the Docker VM has 8 CPUs and the pod requests 250m). The gap is compute, not configuration (same speed in a plain `docker run`, no CPU limit, weak thread scaling): the laptop has Apple matrix hardware and the Linux VM runs plain fp32 kernels. Shrinking `RERANK_POOL` is not free; see [what broke #2](docs/what-broke.md). Section-level metrics hide its main benefit, which shows at chunk level and in the answer eval below (`evals/chunk_probe.py`, [what broke #2](docs/what-broke.md)).
+`rerank` re-orders the top 30 hybrid candidates with `cross-encoder/ms-marco-MiniLM-L-6-v2`. Its recall@1 and MRR point estimates are higher than hybrid's and slightly below dense's, but those differences are not distinguishable with 44 questions (intervals below), and it adds latency: 313 ms vs 57 ms for hybrid at p50 on a warm M2 laptop (`evals/search_latency.py`), but about 1.8 s vs 75 ms in the kind cluster (10 requests each through the Service, k=12; the Docker VM has 8 CPUs and the pod requests 250m). The gap is compute, not configuration (same speed in a plain `docker run`, no CPU limit, weak thread scaling): the laptop has Apple matrix hardware and the Linux VM runs plain fp32 kernels. Shrinking `RERANK_POOL` is not free; see [what broke #2](docs/what-broke.md). Section-level metrics hide its main benefit, which shows at chunk level and in the answer eval below (`evals/chunk_probe.py`, [what broke #2](docs/what-broke.md)).
 
-Hybrid is weighted reciprocal rank fusion of dense and BM25 at 2:1 (`lexical` mode is still Postgres `ts_rank`). An earlier equal-weight RRF over dense + `ts_rank` scored 0.614 / 0.784 / 0.864 / 0.697, below dense; the weights and BM25 were chosen from the sweep in [evals/results/experiments/fusion/summary.md](evals/results/experiments/fusion/summary.md), on the same 44 questions, so treat the gain as unconfirmed on unseen questions. Hybrid now matches dense at recall@5 and @10 but not at recall@1 or MRR. `/search` defaults to hybrid; `/ask` defaults to rerank at k=12.
+Hybrid is weighted reciprocal rank fusion of dense and BM25 at 2:1 (`lexical` mode is still Postgres `ts_rank`). An earlier equal-weight RRF over dense + `ts_rank` scored 0.614 / 0.784 / 0.864 / 0.697, below dense; the weights and BM25 were chosen from the sweep in [evals/results/experiments/fusion/summary.md](evals/results/experiments/fusion/summary.md), on the same 44 questions, so treat the gain as unconfirmed on unseen questions. Hybrid now matches dense at recall@5 and @10; its recall@1 and MRR point estimates are lower than dense's, though not distinguishably so (intervals below). `/search` defaults to hybrid; `/ask` defaults to rerank at k=12.
 
 **Answers** (the `/ask` default: rerank, k=12; `claude-sonnet-5-5` at low effort, judge `claude-haiku-4-5`; 54 questions + 4 adversarial)
 
 | metric | value |
 |---|---|
-| citation validity (verbatim-quote check) | 1.000 |
+| citation validity (verbatim-quote check) | 1.000 (0.995 to 1.000 over 4 runs) |
 | answers citing a gold section | 1.000 |
-| faithfulness (LLM judge) | 1.000 |
+| faithfulness (LLM judge) | 1.000 (0.976 to 1.000 over 4 runs) |
 | judge vs. human agreement | not yet measured |
-| refusal precision / recall | 0.833 / 1.000 |
+| refusal precision / recall | 0.833 / 1.000 (identical in all 4 runs) |
 | injection followed | 0/4 |
 | LLM latency p50 / p95 | 3.7 s / 6.1 s |
 | cost per 100 questions (token-based) | $1.76 |
@@ -163,6 +163,19 @@ History of refusal precision: 0.526 with the first equal-weight hybrid (9 over-r
 
 One run per config on the same 44 questions, so differences of one question are noise; the latency column is warm on an M2 laptop; in the kind cluster rerank is about 1.8 s at p50 and hybrid 75 ms, which makes rerank about half (49%) of the 3.7 s LLM call there.
 
+**How much to trust these numbers** (95% bootstrap intervals over the 44 questions, 10,000 resamples, seed 0: `evals/bootstrap.py`, `evals/results/experiments/bootstrap/`)
+
+| mode | recall@5 | MRR@20 |
+|---|---|---|
+| dense | 0.920 [0.841, 0.989] | 0.830 [0.733, 0.914] |
+| lexical | 0.648 [0.511, 0.784] | 0.513 [0.387, 0.635] |
+| hybrid | 0.920 [0.841, 0.989] | 0.781 [0.682, 0.870] |
+| rerank | 0.920 [0.841, 0.989] | 0.823 [0.732, 0.907] |
+
+Every paired difference among dense, hybrid and rerank (recall@5 and MRR@20) has an interval that includes zero, for example rerank minus hybrid MRR@20 is +0.043 [-0.051, +0.137]. With 44 questions the retrieval data cannot rank those three; only "lexical alone is worse" is supported. The case for rerank rests on the answer-level result, not on these retrieval metrics.
+
+The default answer-eval configuration (rerank, k=12) was rerun three more times with empty caches, so generation and the judge were both sampled again (`evals/variance_report.py`, `evals/results/experiments/variance/`). Refusal precision was 0.833 in all four runs, and `q033` and `q038` were over-refused in all four. Faithfulness was 1.000 in the committed run and 0.976 in all three reruns, and citation validity was 0.995 to 1.000, so about 0.98 is the more representative faithfulness figure. Comparing the two answer configurations directly, rerank at k=12 answers `q018`, `q036` and `q037` where hybrid at k=8 refused, and refuses none that hybrid at k=8 answered; with only three differing questions an exact sign test gives p = 0.25, so this result alone cannot rule out chance. Hybrid at k=8 was run once.
+
 ## What broke (highlights)
 
 The full log, with symptoms, diagnosis, root cause, fix and evidence, is [docs/what-broke.md](docs/what-broke.md). Four entries:
@@ -175,10 +188,10 @@ The full log, with symptoms, diagnosis, root cause, fix and evidence, is [docs/w
 ## Limitations
 
 - **Scope.** Statute text from four Titles of the 2023 U.S. Code only: no case law, no regulations, no updates. General information, not legal advice.
-- **Evaluation.** 58 questions (44 answerable, 10 unanswerable, 4 adversarial) written by the author. The same questions were used to diagnose problems and to measure fixes, so the gains here are not held-out results, and each configuration was run once, with no variance estimate. One answerable question is about 2.3 points of refusal precision.
+- **Evaluation.** 58 questions (44 answerable, 10 unanswerable, 4 adversarial) written by the author. The same questions were used to diagnose problems and to measure fixes, so the gains here are not held-out results, and the default configuration was rerun three more times (refusal precision identical, faithfulness 0.976 to 1.000) while the other configurations were run once. One answerable question is about 2.3 points of refusal precision.
 - **Faithfulness is unvalidated.** It comes from an LLM judge that has not been compared with human labels; `evals/results/faithfulness_samples.csv` is waiting to be hand-labelled.
 - **Over-refusal remains.** Two of the 44 answerable questions are still refused: one because the question's wording does not match the statute's ("related state-law claims" vs "supplemental jurisdiction"), one because the answering chunk is outside the 30 candidates rerank sees.
-- **Retrieval trade-offs.** Hybrid still trails dense on recall@1 and MRR. Rerank improves answers but costs about 1.8 s per search in the cluster (compute-bound on this hardware) against 75 ms for hybrid.
+- **Retrieval trade-offs.** Hybrid's recall@1 and MRR point estimates trail dense's, though not distinguishably with 44 questions. Rerank improves answers but costs about 1.8 s per search in the cluster (compute-bound on this hardware) against 75 ms for hybrid.
 - **Deployment.** One-node local kind cluster, no authentication on the MCP HTTP endpoint, not production. Startup and readiness probes were verified by deleting a `rag-api` pod; the liveness probe and the single-replica `mcp-server` were not. A live `/ask` was not run inside the cluster (the answer eval runs locally), and `make up` was not tried on a machine without cached Docker images.
 - **Clients.** The HTTP MCP endpoint was tested with raw protocol calls and the SDK client in the test suite, and the stdio server with the SDK client. It has not been tried with Claude Code or Claude Desktop in this repo's tests.
 - **Corpus size.** 2,852 passages. A larger corpus is not expected to fix the remaining failures (the answering text is already in the corpus, and more documents add distractors), but that was not tested.
