@@ -123,7 +123,7 @@ Results are written to `evals/results/`. Models are configurable with `GEN_MODEL
 
 ## Results
 
-Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions.jsonl) (44 answerable with section-level gold, 10 unanswerable, 4 adversarial). Retrieval numbers below come from `make dev-eval`. The dense and lexical rows were reproduced inside the kind cluster with `make eval` (identical); the hybrid row changed after that run (see below) and has not been re-run in the cluster yet.
+Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions.jsonl) (44 answerable with section-level gold, 10 unanswerable, 4 adversarial). Retrieval numbers below come from `make dev-eval`. All four rows (16 metrics) were reproduced inside the kind cluster with `make eval`, identical to the committed values, and the CI runner reproduces them too.
 
 **Retrieval** (44 answerable questions)
 
@@ -136,7 +136,7 @@ Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions
 
 `rerank` re-orders the top 30 hybrid candidates with `cross-encoder/ms-marco-MiniLM-L-6-v2`. It lifts recall@1 and MRR over hybrid but does not beat dense, and adds latency: 313 ms vs 57 ms for hybrid at p50 on a warm M2 laptop (`evals/search_latency.py`), but about 1.8 s vs 75 ms in the kind cluster (10 requests each through the Service, k=12; the Docker VM has 8 CPUs and the pod requests 250m). The gap is compute, not configuration (same speed in a plain `docker run`, no CPU limit, weak thread scaling): the laptop has Apple matrix hardware and the Linux VM runs plain fp32 kernels. Shrinking `RERANK_POOL` is not free; see [what broke #2](docs/what-broke.md). Section-level metrics hide its main benefit, which shows at chunk level and in the answer eval below (`evals/chunk_probe.py`, [what broke #2](docs/what-broke.md)).
 
-Hybrid is weighted reciprocal rank fusion of dense and BM25 at 2:1 (`lexical` mode is still Postgres `ts_rank`). An earlier equal-weight RRF over dense + `ts_rank` scored 0.614 / 0.784 / 0.864 / 0.697, below dense; the weights and BM25 were chosen from the sweep in [evals/results/experiments/fusion/summary.md](evals/results/experiments/fusion/summary.md), on the same 44 questions, so treat the gain as unconfirmed on unseen questions. Hybrid now matches dense at recall@5 and @10 but not at recall@1 or MRR. `/ask` defaults to hybrid.
+Hybrid is weighted reciprocal rank fusion of dense and BM25 at 2:1 (`lexical` mode is still Postgres `ts_rank`). An earlier equal-weight RRF over dense + `ts_rank` scored 0.614 / 0.784 / 0.864 / 0.697, below dense; the weights and BM25 were chosen from the sweep in [evals/results/experiments/fusion/summary.md](evals/results/experiments/fusion/summary.md), on the same 44 questions, so treat the gain as unconfirmed on unseen questions. Hybrid now matches dense at recall@5 and @10 but not at recall@1 or MRR. `/search` defaults to hybrid; `/ask` defaults to rerank at k=12.
 
 **Answers** (the `/ask` default: rerank, k=12; `claude-sonnet-5-5` at low effort, judge `claude-haiku-4-5`; 54 questions + 4 adversarial)
 
@@ -161,7 +161,7 @@ History of refusal precision: 0.526 with the first equal-weight hybrid (9 over-r
 | hybrid, k=12 | 0.667 | 5 | 0.923 | $1.72 | 57 ms |
 | **rerank, k=12 (current default)** | 0.833 | 2 | 1.000 | $1.76 | 313 ms |
 
-One run per config on the same 44 questions, so differences of one question are noise; the latency column is warm on an M2 laptop; in the kind cluster rerank is about 1.8 s at p50 and hybrid 75 ms, which makes rerank roughly 45% of the 3.7 s LLM call there.
+One run per config on the same 44 questions, so differences of one question are noise; the latency column is warm on an M2 laptop; in the kind cluster rerank is about 1.8 s at p50 and hybrid 75 ms, which makes rerank about half (49%) of the 3.7 s LLM call there.
 
 ## What broke (highlights)
 
