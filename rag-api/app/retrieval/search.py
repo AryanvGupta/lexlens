@@ -1,10 +1,12 @@
+import os
 from typing import Literal
 
 from app.ingest.embed import embed_query
 from app.store.base import VectorStore
 
 Mode = Literal["dense", "lexical", "hybrid", "rerank"]
-RERANK_POOL = 30  # hybrid candidates the cross-encoder re-orders (mode="rerank")
+# hybrid candidates the cross-encoder re-orders (mode="rerank"); cost is roughly linear in this
+RERANK_POOL = int(os.environ.get("RERANK_POOL", "30"))
 RRF_K = 60  # standard constant from the original RRF paper
 POOL = 50  # candidates taken from each ranker before fusion
 HYBRID_WEIGHTS = (
