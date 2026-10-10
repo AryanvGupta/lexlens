@@ -15,17 +15,21 @@ MCP client --stdio or HTTP--> mcp-server (TypeScript) --HTTP--> rag-api (FastAPI
 
 ## Run it on Kubernetes (kind)
 
-This is a reproducible local Kubernetes deployment on [kind](https://kind.sigs.k8s.io/), not a production setup: one node, no ingress, no authentication on the MCP HTTP endpoint (reach it through port-forward only).
+This is a reproducible local Kubernetes deployment on [kind](https://kind.sigs.k8s.io/), not a production setup: one node, no ingress, and no authentication on the MCP HTTP endpoint unless you set `MCP_AUTH_TOKEN` (see below). Reach it through port-forward only.
 
-Prerequisites: [Docker](https://docs.docker.com/get-docker/), [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation), [kubectl](https://kubernetes.io/docs/tasks/tools/), `make`. Images include PyTorch, so leave several GB of free disk. Only `/ask` needs an [Anthropic API key](https://console.anthropic.com); everything else here is free.
+Prerequisites: [Docker](https://docs.docker.com/get-docker/), [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation), [kubectl](https://kubernetes.io/docs/tasks/tools/), `make`. Images include PyTorch, so leave several GB of free disk. You also need `python3` on the host (`make eval` runs `evals/compare.py`) and network access (ingest downloads about 12 MB of statute HTML from govinfo.gov inside the cluster); `uv` installs Python 3.12 for `rag-api` by itself. Timings measured from a fresh clone on an M-series Mac with a warm Docker cache and an 8-CPU Docker VM, while other jobs were running: `make up` 15 min (most of it `kind load docker-image`, which prints one line per image and then looks frozen), `make ingest` 7.5 min, `make eval` 3.5 min, `k8s/verify-probes.sh` 28 s. A machine without cached Docker images will take longer. Only `/ask` needs an [Anthropic API key](https://console.anthropic.com); everything else here is free.
 
 ```bash
-cp .env.example .env     # set POSTGRES_PASSWORD, SAMPLE_DB_ADMIN_PASSWORD, SAMPLE_DB_RO_PASSWORD; ANTHROPIC_API_KEY is optional
+cp .env.example .env     # set POSTGRES_PASSWORD, SAMPLE_DB_ADMIN_PASSWORD, SAMPLE_DB_RO_PASSWORD (any non-empty values, e.g. `openssl rand -hex 12`); ANTHROPIC_API_KEY is optional; DATABASE_URL and SAMPLE_DB_URL are only for the compose path
 make up                  # kind cluster, builds 3 images, deploys postgres, sample-db, rag-api (2 replicas), mcp-server
 make ingest              # in-cluster Job: loads the corpus (2,852 passages)
-make eval                # in-cluster Job: retrieval eval, then checks it reproduces the committed numbers (+/-0.01)
+make eval                # in-cluster Job: retrieval eval; ends with a 16-row comparison table and `OK: reproduced within +/- 0.01`
 make forward             # rag-api on :8000, MCP on :3000 (Ctrl-C to stop)
+k8s/verify-probes.sh     # about 30 s: delete a rag-api pod while polling the Service; prints OK
+make down                # delete the cluster
 ```
+
+With `make forward` running, `curl localhost:8000/health` returns `{"status":"ok"}` and `/search` works without an API key; `/ask` returns 503 `ANTHROPIC_API_KEY is not set` until a key is in the cluster Secret.
 
 The secret is built from `.env` at deploy time by `make up` (`k8s/make-secret.sh`) and is never written to git. The `up`, `ingest`, `eval` and `forward` targets use the `kind-lexlens` kube context explicitly, so they never touch your current context. `make down` deletes the cluster. `k8s/verify-probes.sh` deletes a `rag-api` pod while polling the Service from inside the cluster, and passes only if every request returned 200 (the other replica kept serving, and the replacement got no traffic until it was Ready). It covers the startup and readiness probes, not the liveness probe or the single-replica `mcp-server`.
 
@@ -37,11 +41,13 @@ claude mcp add --transport http lexlens http://localhost:3000/mcp
 
 The endpoint is stateless streamable HTTP. Other clients: see [mcp-server/README.md](mcp-server/README.md).
 
+**Optional bearer-token auth (off by default).** Put a long random value in `.env` (`MCP_AUTH_TOKEN=$(openssl rand -hex 32)`) and run `make up` again (it re-applies the Secret and restarts the deployments). With a token set, every `/mcp` request needs `Authorization: Bearer <token>` or gets HTTP 401; `/healthz` stays open for the kubelet probes. The token travels in plain HTTP, so keep using port-forward. The server side is covered by tests (`mcp-server/test/httpAuth.test.ts`); registering a client with the header, for example `claude mcp add --transport http lexlens http://localhost:3000/mcp --header "Authorization: Bearer $MCP_AUTH_TOKEN"`, is untested with a real client (check the flag with `claude mcp add --help`).
+
 ## Run it without Kubernetes (docker compose)
 
 The `dev-*` targets run Postgres in Docker Compose and the API and MCP server directly on your machine.
 
-Prerequisites: [Docker](https://docs.docker.com/get-docker/), [uv](https://docs.astral.sh/uv/), Node.js 22+, `make`. Only `/ask` needs an [Anthropic API key](https://console.anthropic.com); search, ingest and retrieval evals do not.
+Prerequisites: [Docker](https://docs.docker.com/get-docker/), [uv](https://docs.astral.sh/uv/), Node.js 22+ (tested with 26), `make`. Only `/ask` needs an [Anthropic API key](https://console.anthropic.com); search, ingest and retrieval evals do not.
 
 **1. Configure `.env`**
 
@@ -200,6 +206,7 @@ The full log, with symptoms, diagnosis, root cause, fix and evidence, is [docs/w
 
 | Symptom | Fix |
 |---|---|
+| `make up` looks frozen for 10+ minutes at `kind load docker-image` | Normal on a first run: it loads three images (about 2.7 GB for `rag-api`) and prints one line per image. |
 | `make up` hangs or the `docker` CLI never returns | Docker Desktop is wedged or the disk is full (the images are large). Free space, fully quit and reopen Docker Desktop, then rerun `make up`; it is safe to repeat. |
 | `make up` fails with "POSTGRES_PASSWORD is missing or empty" | `k8s/make-secret.sh` reads `.env`; set `POSTGRES_PASSWORD`, `SAMPLE_DB_ADMIN_PASSWORD` and `SAMPLE_DB_RO_PASSWORD`. |
 | `curl localhost:3000/mcp` returns 405 or 400 | It only accepts POST with `accept: application/json, text/event-stream`; a plain GET is rejected by design. |
