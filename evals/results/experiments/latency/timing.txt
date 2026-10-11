@@ -1,0 +1,39 @@
+# Rerank-step timing, linux/arm64 container (8 CPU Docker VM, M2), 30 real candidates per question, 58 dev questions, round-robin interleaved, warm, bench lock held. Two independent runs.
+# bs8 = RERANK_OPT=batch8, onednn+int8+bs8 = RERANK_OPT=int8
+## run 1
+fp32                   n=58 median=1.547s p95=1.822s mean=1.577s
+bs8                    n=58 median=1.348s p95=1.732s mean=1.343s
+onednn+int8+bs8        n=58 median=0.877s p95=1.310s mean=0.892s
+FINISHED
+## run 2
+fp32                   n=58 median=1.477s p95=1.774s mean=1.509s
+bs8                    n=58 median=1.256s p95=1.521s mean=1.229s
+onednn+int8+bs8        n=58 median=0.814s p95=1.146s mean=0.837s
+FINISHED
+## earlier sweep (separate invocations, noisier; machine drift +/-40% between runs)
+fp32           n=30 median=2.166s p95=2.501s mean=2.185s
+int8           n=30 median=1.633s p95=2.074s mean=1.667s
+qnnpack+int8   n=30 median=1.805s p95=2.133s mean=1.813s
+onednn+int8    n=30 median=1.371s p95=1.563s mean=1.366s
+t4             n=30 median=1.663s p95=1.951s mean=1.690s
+t1             n=30 median=2.352s p95=2.683s mean=2.394s
+bs8            n=30 median=1.206s p95=1.424s mean=1.180s
+bs16           n=30 median=1.332s p95=1.534s mean=1.304s
+fp32+int8      n=30 median=1.181s p95=1.325s mean=1.154s
+FINISHED
+fp32                   n=58 median=1.585s p95=1.986s mean=1.629s
+bs8                    n=58 median=1.299s p95=1.676s mean=1.285s
+bs4                    n=58 median=1.246s p95=1.576s mean=1.249s
+int8                   n=58 median=1.201s p95=1.495s mean=1.232s
+int8+bs8               n=58 median=1.069s p95=1.478s mean=1.096s
+onednn+int8+bs8        n=58 median=0.987s p95=1.383s mean=0.980s
+FINISHED
+fp32                   n=58 median=1.507s p95=1.726s mean=1.528s
+bs2                    n=58 median=1.305s p95=1.603s mean=1.263s
+bs1                    n=58 median=1.408s p95=1.662s mean=1.362s
+onednn+int8+bs4        n=58 median=0.948s p95=1.111s mean=0.912s
+onednn+int8+bs2        n=58 median=0.887s p95=1.098s mean=0.873s
+onednn+int8+bs1        n=58 median=0.990s p95=1.184s mean=0.975s
+onednn+int8+bs8        n=58 median=0.930s p95=1.119s mean=0.921s
+FINISHED
+bf16: no result after 26 minutes, killed
