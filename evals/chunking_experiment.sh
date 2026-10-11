@@ -2,17 +2,24 @@
 # Chunking experiment: re-ingest with each (words, overlap) and run the retrieval eval.
 # Results go to evals/results/experiments/chunking/; the baseline (300/40) runs last
 # so the database is left in its normal state. Uses the compose DB; takes several minutes.
+# Env: DATABASE_URL (a preset value wins over .env; ingest DROPS AND REBUILDS its table, so also set
+# EXPECT_DB=<name> to abort unless the database name matches), CHUNK_OUT (output dir), LEXLENS_RAW (raw HTML dir).
 set -euo pipefail
 cd "$(dirname "$0")/.."
-set -a; . ./.env; set +a
-docker compose up -d --wait postgres
-out=evals/results/experiments/chunking
+preset="${DATABASE_URL-}"
+set -a; [ -f ./.env ] && . ./.env; set +a
+[ -n "$preset" ] && export DATABASE_URL="$preset"   # a preset value wins over .env
+[ -z "$preset" ] && docker compose up -d --wait postgres
+dbname="${DATABASE_URL##*/}"
+echo "database: $dbname"
+if [ -n "${EXPECT_DB-}" ] && [ "$dbname" != "$EXPECT_DB" ]; then echo "ABORT: database is '$dbname', expected '$EXPECT_DB'" >&2; exit 1; fi
+out="${CHUNK_OUT:-evals/results/experiments/chunking}"
 mkdir -p "$out"
 
 for cfg in "300 0" "150 20" "75 10" "300 40"; do
   set -- $cfg
   d="$out/w$1-o$2"
-  echo "== chunk words=$1 overlap=$2"
+  echo "== chunk words=$1 overlap=$2 db=$dbname"
   (cd rag-api && CHUNK_WORDS=$1 CHUNK_OVERLAP=$2 uv run python -m app.ingest) | tail -1 | tee "$d.rows" >/dev/null
   (cd rag-api && EVAL_RESULTS="../$d" uv run python ../evals/run_eval.py) >/dev/null
 done
