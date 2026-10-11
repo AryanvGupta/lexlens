@@ -19,7 +19,14 @@ DEPTH = 20
 
 def main() -> None:
     store = PgVectorStore(os.environ["DATABASE_URL"])
-    qs = [json.loads(line) for line in (ROOT / "evals/dataset/questions.jsonl").open()]
+    qs = [
+        json.loads(line)
+        for line in Path(
+            os.environ.get("EVAL_DATASET", ROOT / "evals/dataset/questions.jsonl")
+        )
+        .read_text()
+        .splitlines()
+    ]
     qs = [
         q for q in qs if q["answerable"] and not q.get("adversarial")
     ]  # refusal and adversarial: M3

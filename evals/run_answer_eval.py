@@ -144,7 +144,14 @@ def estimate(store, qs):
 
 def main() -> None:
     store = PgVectorStore(os.environ["DATABASE_URL"])
-    qs = [json.loads(line) for line in (ROOT / "evals/dataset/questions.jsonl").open()]
+    qs = [
+        json.loads(line)
+        for line in Path(
+            os.environ.get("EVAL_DATASET", ROOT / "evals/dataset/questions.jsonl")
+        )
+        .read_text()
+        .splitlines()
+    ]
     main_qs = [q for q in qs if not q.get("adversarial")]
     adv_qs = [q for q in qs if q.get("adversarial")]
     if "--estimate" in sys.argv:
@@ -202,6 +209,24 @@ def main() -> None:
         )
 
     OUT.mkdir(parents=True, exist_ok=True)
+    (OUT / "rows.json").write_text(
+        json.dumps(
+            [
+                {
+                    "id": q["id"],
+                    "answerable": q["answerable"],
+                    "refused": o["refused"],
+                    "reason": o.get("reason"),
+                    "answer": o["answer"],
+                    "citations": o["citations"],
+                    "retrieved_ids": [p["id"] for p in o["retrieved"]],
+                }
+                for q, o in rows
+            ],
+            indent=1,
+        )
+        + "\n"
+    )
     labels = RES / "faithfulness_samples.csv"  # hand labels live with the baseline
     samples = OUT / "faithfulness_samples.csv"
     prior = (
