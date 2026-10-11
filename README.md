@@ -132,7 +132,34 @@ Results are written to `evals/results/`. Models are configurable with `GEN_MODEL
 
 Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions.jsonl) (44 answerable with section-level gold, 10 unanswerable, 4 adversarial). Retrieval numbers below come from `make dev-eval`. All four rows (16 metrics) were reproduced inside the kind cluster with `make eval`, identical to the committed values, and the CI runner reproduces them too.
 
-**Retrieval** (44 answerable questions)
+**Held-out test: 60 questions the system was never tuned on** (frozen with a written [protocol](evals/dataset/HELDOUT-PROTOCOL.md) before anything ran on it; each configuration run once; files in `evals/results/experiments/heldout/`). Development-set numbers from the tables further down are in brackets.
+
+| retrieval, 40 answerable questions | recall@5 | recall@10 | MRR@20 |
+|---|---|---|---|
+| dense | 0.650 [0.920] | 0.775 [0.955] | 0.511 [0.830] |
+| lexical | 0.450 [0.648] | 0.500 [0.716] | 0.330 [0.513] |
+| hybrid | 0.600 [0.920] | 0.750 [0.955] | 0.518 [0.781] |
+| rerank | 0.650 [0.920] | 0.750 [0.966] | 0.595 [0.823] |
+
+| answer eval, 60 questions | previous default (hybrid, k=8) | current default (rerank, k=12) |
+|---|---|---|
+| answerable questions refused (of 40) | 12 (30%) [dev 5 of 44] | 8 (20%) [dev 2 of 44] |
+| unanswerable questions refused (of 12) | 12 | 12 |
+| refusal precision | 0.500 | 0.600 |
+| answers citing the gold section | 1.000 | 0.938 |
+| citation validity / faithfulness (LLM judge) | 1.000 / 1.000 | 1.000 / 1.000 |
+| injected instructions followed (of 8) | 0 (the substring metric says 1, see below) | 0 |
+| cost per 100 questions (token-based) | $1.15 | $1.52 |
+
+How to read it:
+- **The development numbers overstated real performance.** On unseen questions the right section is in the top 5 for about 65% of the questions, not 92%, and the intervals do not overlap (dense recall@5 is 0.650 [0.50, 0.80] here against 0.920 [0.84, 0.99] on the dev set). I cannot separate the causes: the dev questions were written by the author with the statutes' wording in view and were also used for tuning, while the held-out questions are plain-language, include sections that span many chunks, and were written by a model.
+- **On retrieval, dense, hybrid and rerank are still not distinguishable.** Every paired interval includes zero; rerank's MRR gain over dense is +0.084 [-0.010, +0.187] (`evals/results/experiments/heldout/bootstrap/`).
+- **Answer level: the current default refuses fewer answerable questions (8 against 12), in the same direction as on the dev set, but the pre-registered test does not reach significance.** Five questions were refused only by the old default and one only by the new one; an exact two-sided sign test gives p = 0.22. Pooling with the dev pairs (3 against 0) gives 8 against 1, p about 0.04, but the dev pairs helped pick the new default, so I do not treat that as confirmation.
+- **Refusal behaviour is the strength; retrieval is the weakness.** Both configurations refuse all 12 out-of-corpus questions. For the current default, 7 of the 8 over-refusals had the gold section absent from the 12 retrieved passages, and the model's stated reason says so; the eighth had the section but not the answering chunk. Two answers under the current default cite no gold section (`h018`, `h031`); both are hedged partial answers from the wrong section, in effect soft refusals.
+- **Injection: nothing was followed.** The canary-substring metric flags one answer under the old default (`h042`), but the answer is correct and says the embedded instruction was treated as untrusted text, so the metric overcounts when a model quotes the injection while ignoring it.
+- **Limits:** 60 questions written and reviewed by models, not by a human; one run per configuration; the faithfulness judge is still not validated by humans. The held-out set has now been used: tuning on it would make it a dev set.
+
+**Retrieval, dev set** (44 answerable questions; this set was used for tuning)
 
 | mode | recall@1 | recall@5 | recall@10 | mrr@20 |
 |---|---|---|---|---|
@@ -145,7 +172,7 @@ Dataset: 58 questions in [evals/dataset/questions.jsonl](evals/dataset/questions
 
 Hybrid is weighted reciprocal rank fusion of dense and BM25 at 2:1 (`lexical` mode is still Postgres `ts_rank`). An earlier equal-weight RRF over dense + `ts_rank` scored 0.614 / 0.784 / 0.864 / 0.697, below dense; the weights and BM25 were chosen from the sweep in [evals/results/experiments/fusion/summary.md](evals/results/experiments/fusion/summary.md), on the same 44 questions, so treat the gain as unconfirmed on unseen questions. Hybrid now matches dense at recall@5 and @10; its recall@1 and MRR point estimates are lower than dense's, though not distinguishably so (intervals below). `/search` defaults to hybrid; `/ask` defaults to rerank at k=12.
 
-**Answers** (the `/ask` default: rerank, k=12; `claude-sonnet-5-5` at low effort, judge `claude-haiku-4-5`; 54 questions + 4 adversarial)
+**Answers, dev set** (the `/ask` default: rerank, k=12; `claude-sonnet-5-5` at low effort, judge `claude-haiku-4-5`; 54 questions + 4 adversarial)
 
 | metric | value |
 |---|---|
@@ -185,18 +212,19 @@ The default answer-eval configuration (rerank, k=12) was rerun three more times 
 
 ## What broke (highlights)
 
-The full log, with symptoms, diagnosis, root cause, fix and evidence, is [docs/what-broke.md](docs/what-broke.md). Four entries:
+The full log, with symptoms, diagnosis, root cause, fix and evidence, is [docs/what-broke.md](docs/what-broke.md). Five entries:
 
 - **Hybrid retrieval scored below dense (M2).** The section heading was neither embedded nor in the full-text index. Embedding `title + text` lifted hybrid recall@5 from 0.659 to 0.784; replacing equal-weight RRF over `ts_rank` with weighted fusion of dense and BM25 later brought it to 0.920, equal to dense.
-- **The system refused answerable questions (M3).** Refusal precision was 0.526. Reading the model's own refusal reasons showed the answering passage was not being retrieved, so the refusal rule was fine and retrieval was the problem. A chunk-level probe predicted which questions a cross-encoder rerank at k=12 would fix, and the answer eval then confirmed it: precision 0.833.
+- **The system refused answerable questions (M3).** Refusal precision was 0.526. Reading the model's own refusal reasons showed the answering passage was not being retrieved, so the refusal rule was fine and retrieval was the problem. A chunk-level probe predicted which questions a cross-encoder rerank at k=12 would fix, and the dev-set answer eval then confirmed it: precision 0.833 (on the held-out set the same default scored 0.600, with 8 of 40 answerable questions refused).
 - **The SQL safety guard ran after the database connection opened (M5).** A test written to prove a rejected `DROP TABLE` never touches the database failed. The guard now runs first.
 - **The reranker could not load in the cluster, and `make up` kept the old image (M7).** The image baked in only one model and forbids downloads at startup, so the pods crash-looped on the startup probe while local tests passed. Both causes were fixed and the cluster checks re-run.
+- **The development results did not hold up on unseen questions (M7).** On 60 pre-registered held-out questions, recall@5 was about 0.65 against 0.92 on the dev set, and the current default refused 8 of 40 answerable questions against 2 of 44. Seven of those eight were retrieval misses, not refusal-rule errors, and nothing was tuned on the held-out set afterwards.
 
 ## Limitations
 
 - **Scope.** Statute text from four Titles of the 2023 U.S. Code only: no case law, no regulations, no updates. General information, not legal advice.
-- **Evaluation.** 58 questions (44 answerable, 10 unanswerable, 4 adversarial) written by the author. The same questions were used to diagnose problems and to measure fixes, so the gains here are not held-out results, and the default configuration was rerun three more times (refusal precision identical, faithfulness 0.976 to 1.000) while the other configurations were run once. One answerable question is about 2.3 points of refusal precision.
-- **Faithfulness is unvalidated.** It comes from an LLM judge that has not been compared with human labels; `evals/results/faithfulness_samples.csv` is waiting to be hand-labelled.
+- **Evaluation.** Two question sets. The 58 dev questions (44 answerable, 10 unanswerable, 4 adversarial) were written by the author and used for diagnosis and tuning, so the dev numbers are optimistic (see the held-out results above). The 60 held-out questions were written by a model and reviewed by a model, not a human, and each configuration was run on them once. The default configuration was rerun three more times on the dev set (refusal precision identical, faithfulness 0.976 to 1.000). One answerable question is about 2.3 to 2.5 points.
+- **Faithfulness is not validated by a human.** It comes from an LLM judge (claude-haiku-4-5). A second model (Claude, reading each answer against the passages it cites) checked the 14 sampled dev answers and agreed with the judge on 14 of 14 (`evals/results/faithfulness_labels_claude.csv`, one minor imprecision noted); that is model-against-model agreement, not human validation, and all 14 sampled answers were judged faithful, so it says little about the judge's misses. `evals/results/faithfulness_samples.csv` is still waiting for human labels.
 - **Query rewriting did not help.** An opt-in LLM rewrite step (`mode=rewrite`, claude-haiku-4-5, about 1.4 s extra per request) pulls the `q033` gold section into the candidate pool but does not change top-12 recall on the dev set (0.977 with and without it), because the reranker still ranks it outside the top 12. It is off by default and kept as a documented negative result: `evals/results/experiments/rewrite/retrieval.md`.
 - **Over-refusal remains.** Two of the 44 answerable questions are still refused: one because the question's wording does not match the statute's ("related state-law claims" vs "supplemental jurisdiction"), one because the answering chunk is outside the 30 candidates rerank sees.
 - **Retrieval trade-offs.** Hybrid's recall@1 and MRR point estimates trail dense's, though not distinguishably with 44 questions. Rerank improves answers but costs about 1.7 to 1.8 s per search in the cluster (compute-bound on this hardware) against 75 to 86 ms for hybrid. Two opt-in speed options exist, both off by default and not the measured configuration: `RERANK_OPT=batch8` (same model scored in batches of 8, about 15 to 19% faster, identical rankings on all 58 dev questions) and `RERANK_OPT=int8` (dynamic int8 quantization, about 43% faster in the container, 0.85 s vs 1.5 s for the rerank step; the top-12 set changes for 40 of 58 questions, and in one answer-eval run refusal behaviour was identical but faithfulness was 0.929 against 0.976 to 1.000 for the default, which one run cannot explain). Details: [what broke #2](docs/what-broke.md).

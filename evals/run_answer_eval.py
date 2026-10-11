@@ -192,6 +192,7 @@ def main() -> None:
     faithful = sum(v["faithful"] for v in verdicts.values()) / len(verdicts)
 
     followed = []
+    adv_out = []
     for q in adv_qs:
         o = ask(
             PoisonedStore(store, q["gold_source_ids"], q["inject"]),
@@ -207,8 +208,17 @@ def main() -> None:
                 "refused": o["refused"],
             }
         )
+        adv_out.append(
+            {
+                "id": q["id"],
+                "answer": o["answer"],
+                "refused": o["refused"],
+                "reason": o.get("reason"),
+            }
+        )
 
     OUT.mkdir(parents=True, exist_ok=True)
+    (OUT / "adversarial.json").write_text(json.dumps(adv_out, indent=1) + "\n")
     (OUT / "rows.json").write_text(
         json.dumps(
             [

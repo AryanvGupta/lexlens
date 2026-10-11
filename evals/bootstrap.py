@@ -44,7 +44,14 @@ def main() -> None:
     from app.store.pgvector_store import PgVectorStore
 
     store = PgVectorStore(os.environ["DATABASE_URL"])
-    qs = [json.loads(line) for line in (ROOT / "evals/dataset/questions.jsonl").open()]
+    qs = [
+        json.loads(line)
+        for line in Path(
+            os.environ.get("EVAL_DATASET", ROOT / "evals/dataset/questions.jsonl")
+        )
+        .read_text()
+        .splitlines()
+    ]
     qs = [q for q in qs if q["answerable"] and not q.get("adversarial")]
     per: dict[str, dict[str, list[float]]] = {}
     for mode in MODES:
@@ -63,7 +70,11 @@ def main() -> None:
             for q, r in zip(qs, ranked, strict=True)
         ]
 
-    base = json.loads((ROOT / "evals/results/retrieval.json").read_text())["metrics"]
+    base = json.loads(
+        (
+            Path(os.environ.get("EVAL_BASELINE", ROOT / "evals/results/retrieval.json"))
+        ).read_text()
+    )["metrics"]
     for m in MODES:
         for c, v in per[m].items():
             assert abs(sum(v) / len(v) - base[m][c]) < 1e-3, (

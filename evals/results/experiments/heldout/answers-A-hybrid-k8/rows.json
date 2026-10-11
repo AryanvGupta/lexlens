@@ -1,0 +1,1322 @@
+[
+ {
+  "id": "h001",
+  "answerable": true,
+  "refused": true,
+  "reason": "The provided passages do not include the utility-service provision (11 U.S.C. \u00a7366) or any text addressing whether a utility may discontinue service because of a bankruptcy filing.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:1452:0",
+   "usc-11:107:0",
+   "usc-11:527:1",
+   "usc-11:527:2",
+   "usc-11:105:0",
+   "usc-11:528:0",
+   "usc-11:362:24",
+   "usc-11:110:3"
+  ]
+ },
+ {
+  "id": "h002",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Generally yes. If you were required to file tax returns under nonbankruptcy law, you must file all returns for taxable periods ending in the 4 years before your petition by the day before the first scheduled creditors meeting. If they are not filed by then, the trustee may hold the meeting open for a reasonable time, but not beyond 120 days after the meeting for past-due returns. For returns not past due at filing, the limit is the later of 120 days after the meeting or the last automatic extension date. The court may extend these periods only if you show circumstances beyond your control.",
+  "citations": [
+   {
+    "passage_id": "usc-11:1308:0",
+    "quote": "Not later than the day before the date on which the meeting of the creditors is first scheduled to be held under section 341(a), if the debtor was required to file a tax return under applicable nonbankruptcy law, the debtor shall file with appropriate tax authorities all tax returns for all taxable periods ending during the 4-year period ending on the date of the filing of the petition."
+   },
+   {
+    "passage_id": "usc-11:1308:0",
+    "quote": "the trustee may hold open that meeting for a reasonable period of time to allow the debtor an additional period of time to file any unfiled returns"
+   },
+   {
+    "passage_id": "usc-11:1308:0",
+    "quote": "for any return that is past due as of the date of the filing of the petition, the date that is 120 days after the date of that meeting"
+   },
+   {
+    "passage_id": "usc-11:1308:1",
+    "quote": "if the debtor demonstrates by a preponderance of the evidence that the failure to file a return as required under paragraph (1) is attributable to circumstances beyond the control of the debtor, the court may extend the filing period"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-11:1308:0",
+   "usc-11:527:2",
+   "usc-11:527:1",
+   "usc-11:341:0",
+   "usc-11:521:10",
+   "usc-11:521:6",
+   "usc-11:110:2",
+   "usc-11:1308:1"
+  ]
+ },
+ {
+  "id": "h003",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Yes. Under 11 U.S.C. \u00a7 302(a), a joint case is commenced by filing a single petition by an individual who may be a debtor under the chosen chapter and that individual's spouse. Filing the joint petition constitutes an order for relief, and the court then determines the extent, if any, to which the debtors' estates are consolidated.",
+  "citations": [
+   {
+    "passage_id": "usc-11:302:0",
+    "quote": "A joint case under a chapter of this title is commenced by the filing with the bankruptcy court of a single petition under such chapter by an individual that may be a debtor under such chapter and such individual's spouse."
+   },
+   {
+    "passage_id": "usc-11:302:0",
+    "quote": "After the commencement of a joint case, the court shall determine the extent, if any, to which the debtors' estates shall be consolidated."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-11:302:0",
+   "usc-11:527:1",
+   "usc-11:110:2",
+   "usc-11:110:0",
+   "usc-11:110:3",
+   "usc-11:110:1",
+   "usc-11:110:6",
+   "usc-11:527:2"
+  ]
+ },
+ {
+  "id": "h004",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Generally no, while the chapter 13 case is pending. Under 11 U.S.C. \u00a71301(a), after the order for relief a creditor may not act, or commence or continue a civil action, to collect a consumer debt from a cosigner, unless the cosigner became liable in the ordinary course of the cosigner's business, or the case is closed, dismissed, or converted to chapter 7 or 11. The stay is not absolute: on request and after notice and a hearing, the court must grant relief from it to the extent the cosigner received the consideration for the claim, the plan proposes not to pay the claim, or the creditor's interest would be irreparably harmed by the stay. A creditor may also present a negotiable instrument and give notice of dishonor. This is general information from statute text, not legal advice.",
+  "citations": [
+   {
+    "passage_id": "usc-11:1301:0",
+    "quote": "after the order for relief under this chapter, a creditor may not act, or commence or continue any civil action, to collect all or any part of a consumer debt of the debtor from any individual that is liable on such debt with the debtor, or that secured such debt"
+   },
+   {
+    "passage_id": "usc-11:1301:0",
+    "quote": "such individual became liable on or secured such debt in the ordinary course of such individual's business"
+   },
+   {
+    "passage_id": "usc-11:1301:0",
+    "quote": "the case is closed, dismissed, or converted to a case under chapter 7 or 11 of this title"
+   },
+   {
+    "passage_id": "usc-11:1301:0",
+    "quote": "the court shall grant relief from the stay provided by subsection (a) of this section with respect to a creditor, to the extent that"
+   },
+   {
+    "passage_id": "usc-11:1301:0",
+    "quote": "the plan filed by the debtor proposes not to pay such claim"
+   },
+   {
+    "passage_id": "usc-11:1301:0",
+    "quote": "A creditor may present a negotiable instrument, and may give notice of dishonor of such an instrument."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-11:527:2",
+   "usc-11:524:21",
+   "usc-11:525:1",
+   "usc-11:1201:0",
+   "usc-11:1328:2",
+   "usc-11:521:5",
+   "usc-11:1328:1",
+   "usc-11:1301:0"
+  ]
+ },
+ {
+  "id": "h005",
+  "answerable": true,
+  "refused": true,
+  "reason": "The provided excerpt of 11 U.S.C. \u00a7525 is truncated and does not include the private-employer provision, so the passages cannot confirm whether a private employer may fire someone for having gone through bankruptcy.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-11:527:1",
+   "usc-11:110:5",
+   "usc-11:527:2",
+   "usc-11:525:1",
+   "usc-11:110:4",
+   "usc-28:155:0",
+   "usc-11:110:0",
+   "usc-11:110:6"
+  ]
+ },
+ {
+  "id": "h006",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Under 11 U.S.C. \u00a7727(a)(8), the court will not grant a chapter 7 discharge if the debtor received a discharge under \u00a7727 (chapter 7), \u00a71141 (chapter 11), or the old Bankruptcy Act in a case commenced within 8 years before the filing date of the new petition. So you generally must wait until 8 years have passed from the filing date of the prior case (not the discharge date) to file a new chapter 7 case and get a discharge. Different timing rules apply if you instead file chapter 13: \u00a71328(f)(1) bars a chapter 13 discharge if you received a chapter 7, 11, or 12 discharge in a case filed during the 4-year period preceding the order for relief. The passages provided do not state the full text of the lead-in to \u00a7727(a), but the 8-year rule appears in paragraph (8).",
+  "citations": [
+   {
+    "passage_id": "usc-11:727:1",
+    "quote": "the debtor has been granted a discharge under this section, under section 1141 of this title, or under section 14, 371, or 476 of the Bankruptcy Act, in a case commenced within 8 years before the date of the filing of the petition;"
+   },
+   {
+    "passage_id": "usc-11:1328:2",
+    "quote": "in a case filed under chapter 7, 11, or 12 of this title during the 4-year period preceding the date of the order for relief under this chapter"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-11:1192:0",
+   "usc-11:1328:2",
+   "usc-11:1328:0",
+   "usc-11:1328:1",
+   "usc-11:1228:1",
+   "usc-11:727:1",
+   "usc-11:727:4",
+   "usc-11:1228:2"
+  ]
+ },
+ {
+  "id": "h007",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Yes, in general: the provisions refer to the trustee rejecting executory contracts and unexpired leases, and rejection is treated as a breach. Timing depends on the chapter. In chapter 9, 11, 12, or 13, the trustee may assume or reject residential real property or personal property leases at any time before plan confirmation, though the court may order a decision within a set time on a party's request. In chapter 7, such a lease or contract is deemed rejected if not assumed or rejected within 60 days (or an extended period). Limits exist: the trustee cannot assume or assign certain contracts, and rejecting a real property lease where the debtor is lessor lets the lessee keep its rights under the lease for the balance of the term.",
+  "citations": [
+   {
+    "passage_id": "usc-11:365:3",
+    "quote": "In a case under chapter 9, 11, 12, or 13 of this title, the trustee may assume or reject an executory contract or unexpired lease of residential real property or of personal property of the debtor at any time before the confirmation of a plan"
+   },
+   {
+    "passage_id": "usc-11:365:3",
+    "quote": "then such contract or lease is deemed rejected."
+   },
+   {
+    "passage_id": "usc-11:365:7",
+    "quote": "the rejection of an executory contract or unexpired lease of the debtor constitutes a breach of such contract or lease"
+   },
+   {
+    "passage_id": "usc-11:365:2",
+    "quote": "The trustee may not assume or assign any executory contract or unexpired lease of the debtor"
+   },
+   {
+    "passage_id": "usc-11:365:8",
+    "quote": "the lessee may retain its rights under such lease"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-11:365:15",
+   "usc-11:365:3",
+   "usc-11:365:11",
+   "usc-11:365:8",
+   "usc-11:929:0",
+   "usc-11:365:2",
+   "usc-11:365:5",
+   "usc-11:365:7"
+  ]
+ },
+ {
+  "id": "h008",
+  "answerable": true,
+  "refused": true,
+  "reason": "The provided passages do not include the provisions (such as the secured/unsecured claim bifurcation in section 506) that address how an undersecured car loan claim is treated in bankruptcy.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-11:525:1",
+   "usc-28:3012:0",
+   "usc-11:110:2",
+   "usc-11:527:2",
+   "usc-11:527:3",
+   "usc-11:330:1",
+   "usc-11:362:9",
+   "usc-11:110:1"
+  ]
+ },
+ {
+  "id": "h009",
+  "answerable": true,
+  "refused": true,
+  "reason": "The provided passages do not address a bank's right of setoff against a debtor's deposits (e.g., 11 U.S.C. \u00a7553 or \u00a7362), so the question cannot be answered from them.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-11:527:2",
+   "usc-11:527:1",
+   "usc-11:524:23",
+   "usc-11:745:0",
+   "usc-28:1930:2",
+   "usc-11:524:21",
+   "usc-11:525:1",
+   "usc-11:524:20"
+  ]
+ },
+ {
+  "id": "h010",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Generally no: copyright protection is not available for works of the United States Government. However, the Government may receive and hold copyrights transferred to it by assignment, bequest, or otherwise. Also, civilian faculty members at certain covered military institutions (e.g., National Defense University, U.S. Military Academy) own the copyright in their covered works, subject to a possible government license.",
+  "citations": [
+   {
+    "passage_id": "usc-17:105:0",
+    "quote": "Copyright protection under this title is not available for any work of the United States Government, but the United States Government is not precluded from receiving and holding copyrights transferred to it by assignment, bequest, or otherwise."
+   },
+   {
+    "passage_id": "usc-17:105:0",
+    "quote": "Subject to subsection (c), the covered author of a covered work owns the copyright to that covered work."
+   },
+   {
+    "passage_id": "usc-17:105:0",
+    "quote": "The term \"covered author\" means a civilian member of the faculty of a covered institution."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-17:105:0",
+   "usc-17:403:0",
+   "usc-35:205:0",
+   "usc-35:207:0",
+   "usc-28:1498:2",
+   "usc-17:704:0",
+   "usc-17:803:14",
+   "usc-17:104A:5"
+  ]
+ },
+ {
+  "id": "h011",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Generally yes, if you are the owner of a copy of the computer program. Under 17 U.S.C. \u00a7117(a), it is not infringement for the owner of a copy to make or authorize another copy or adaptation solely for archival purposes. All archival copies must be destroyed if continued possession of the program ceases to be rightful. Archival copies may be leased, sold, or transferred only along with the original copy as part of a transfer of all rights in the program. This is general information from statute text, not legal advice, and it applies to owners of a copy, not to those who merely license or rent software (the passages do not address license terms).",
+  "citations": [
+   {
+    "passage_id": "usc-17:117:0",
+    "quote": "it is not an infringement for the owner of a copy of a computer program to make or authorize the making of another copy or adaptation of that computer program provided:"
+   },
+   {
+    "passage_id": "usc-17:117:0",
+    "quote": "that such new copy or adaptation is for archival purposes only and that all archival copies are destroyed in the event that continued possession of the computer program should cease to be rightful"
+   },
+   {
+    "passage_id": "usc-17:117:0",
+    "quote": "Any exact copies prepared in accordance with the provisions of this section may be leased, sold, or otherwise transferred, along with the copy from which such copies were prepared, only as part of the lease, sale, or other transfer of all rights in the program."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-17:109:2",
+   "usc-17:117:0",
+   "usc-17:117:1",
+   "usc-17:112:3",
+   "usc-17:108:1",
+   "usc-17:112:1",
+   "usc-17:104A:4",
+   "usc-17:109:4"
+  ]
+ },
+ {
+  "id": "h012",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Yes. Under 17 U.S.C. \u00a7204(a), a transfer of copyright ownership, other than by operation of law, is not valid unless it is in writing (an instrument of conveyance, or a note or memorandum of the transfer) and signed by the owner of the rights conveyed or the owner's duly authorized agent. Transfers by operation of law are excepted. A certificate of acknowledgement is not required for validity.",
+  "citations": [
+   {
+    "passage_id": "usc-17:204:0",
+    "quote": "A transfer of copyright ownership, other than by operation of law, is not valid unless an instrument of conveyance, or a note or memorandum of the transfer, is in writing and signed by the owner of the rights conveyed or such owner's duly authorized agent."
+   },
+   {
+    "passage_id": "usc-17:204:0",
+    "quote": "A certificate of acknowledgement is not required for the validity of a transfer"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-17:204:0",
+   "usc-17:104A:4",
+   "usc-17:113:2",
+   "usc-17:109:0",
+   "usc-17:1001:2",
+   "usc-17:409:0",
+   "usc-17:201:0",
+   "usc-17:106:0"
+  ]
+ },
+ {
+  "id": "h013",
+  "answerable": true,
+  "refused": true,
+  "reason": "The passages reference section 412 (timely registration) but do not include its text, so they do not state whether statutory damages are available when registration occurs after infringement began.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-17:1506:6",
+   "usc-17:504:1",
+   "usc-17:1504:3",
+   "usc-17:1401:13",
+   "usc-17:1505:0",
+   "usc-17:411:1",
+   "usc-17:411:0",
+   "usc-35:287:0"
+  ]
+ },
+ {
+  "id": "h014",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Yes. Under 17 U.S.C. \u00a7506(a), willful copyright infringement is criminally punishable (as provided in 18 U.S.C. \u00a72319) if it is done for commercial advantage or private financial gain, involves reproduction or distribution of copies with a total retail value of more than $1,000 during any 180-day period, or involves distributing a work being prepared for commercial distribution on a publicly accessible computer network. Evidence of reproduction or distribution alone is not sufficient to establish willfulness. Section 602(a)(2) also makes certain importation or exportation of infringing items actionable under section 506.",
+  "citations": [
+   {
+    "passage_id": "usc-17:506:0",
+    "quote": "Any person who willfully infringes a copyright shall be punished as provided under section 2319 of title 18, if the infringement was committed\u2014"
+   },
+   {
+    "passage_id": "usc-17:506:0",
+    "quote": "for purposes of commercial advantage or private financial gain"
+   },
+   {
+    "passage_id": "usc-17:506:0",
+    "quote": "evidence of reproduction or distribution of a copyrighted work, by itself, shall not be sufficient to establish willful infringement of a copyright."
+   },
+   {
+    "passage_id": "usc-17:602:0",
+    "quote": "is an infringement of the exclusive right to distribute copies or phonorecords under section 106, actionable under sections 501 and 506."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-17:506:0",
+   "usc-17:501:0",
+   "usc-17:503:1",
+   "usc-17:504:1",
+   "usc-17:1008:0",
+   "usc-17:602:0",
+   "usc-17:504:0",
+   "usc-17:411:1"
+  ]
+ },
+ {
+  "id": "h015",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Possibly, but only in limited circumstances. Under 17 U.S.C. \u00a7106A, the author of a \"work of visual art\" has the right to prevent destruction of a work of recognized stature, and intentional or grossly negligent destruction of such a work violates that right. These rights belong to the author even if the author does not own the copyright, and selling the physical copy does not waive them. The right is subject to limits, including \u00a7113(d) for works incorporated in buildings, and it covers only works of recognized stature (not every painting). The passages do not define \"work of visual art\" (\u00a7101), so whether a particular painting qualifies cannot be determined from them.",
+  "citations": [
+   {
+    "passage_id": "usc-17:106A:0",
+    "quote": "to prevent any destruction of a work of recognized stature, and any intentional or grossly negligent destruction of that work is a violation of that right."
+   },
+   {
+    "passage_id": "usc-17:106A:0",
+    "quote": "Only the author of a work of visual art has the rights conferred by subsection (a) in that work, whether or not the author is the copyright owner."
+   },
+   {
+    "passage_id": "usc-17:106A:3",
+    "quote": "Transfer of ownership of any copy of a work of visual art, or of a copyright or any exclusive right under a copyright, shall not constitute a waiver of the rights conferred by subsection (a)."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-17:120:0",
+   "usc-17:106A:1",
+   "usc-17:113:1",
+   "usc-17:113:2",
+   "usc-17:106A:0",
+   "usc-11:546:2",
+   "usc-17:106A:3",
+   "usc-35:289:0"
+  ]
+ },
+ {
+  "id": "h016",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Under 17 U.S.C. \u00a7110(1), showing a movie in face-to-face teaching at a nonprofit educational institution, in a classroom or similar place devoted to instruction, is not copyright infringement, so no license is needed. The exception does not apply if the movie is shown from a copy that was not lawfully made and the person responsible for the performance knew or had reason to believe that. The passages do not address other settings, such as for-profit schools or entertainment screenings, so they do not settle those cases.",
+  "citations": [
+   {
+    "passage_id": "usc-17:110:0",
+    "quote": "performance or display of a work by instructors or pupils in the course of face-to-face teaching activities of a nonprofit educational institution, in a classroom or similar place devoted to instruction"
+   },
+   {
+    "passage_id": "usc-17:110:0",
+    "quote": "unless, in the case of a motion picture or other audiovisual work, the performance, or the display of individual images, is given by means of a copy that was not lawfully made under this title, and that the person responsible for the performance knew or had reason to believe was not lawfully made"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-17:110:9",
+   "usc-17:110:1",
+   "usc-17:110:0",
+   "usc-17:110:10",
+   "usc-17:115:62",
+   "usc-17:115:15",
+   "usc-17:506:0",
+   "usc-17:121:0"
+  ]
+ },
+ {
+  "id": "h017",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "The Copyright Claims Board has three full-time Copyright Claims Officers, who are recommended by the Register of Copyrights and appointed by the Librarian of Congress. The Board is also assisted by at least two Copyright Claims Attorneys, but those attorneys are not officers.",
+  "citations": [
+   {
+    "passage_id": "usc-17:1502:0",
+    "quote": "The Register of Copyrights shall recommend 3 full-time Copyright Claims Officers to serve on the Copyright Claims Board in accordance with paragraph (3)(A)."
+   },
+   {
+    "passage_id": "usc-17:1502:0",
+    "quote": "The Register of Copyrights shall hire not fewer than 2 full-time Copyright Claims Attorneys to assist in the administration of the Copyright Claims Board."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-17:1502:0",
+   "usc-17:1503:3",
+   "usc-17:1503:1",
+   "usc-17:1503:2",
+   "usc-17:1502:2",
+   "usc-17:1503:0",
+   "usc-17:1502:1",
+   "usc-17:1506:11"
+  ]
+ },
+ {
+  "id": "h018",
+  "answerable": true,
+  "refused": true,
+  "reason": "The passages cover only limited contexts (e.g., injunctive relief for approved drugs/biological products under \u00a7271(e)(4) and remedies for process patents) and do not contain the general injunction provision (35 U.S.C. \u00a7283), so they cannot answer the general question.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-35:287:3",
+   "usc-35:295:0",
+   "usc-35:287:1",
+   "usc-35:287:2",
+   "usc-35:287:4",
+   "usc-35:271:8",
+   "usc-35:271:1",
+   "usc-35:271:4"
+  ]
+ },
+ {
+  "id": "h019",
+  "answerable": true,
+  "refused": true,
+  "reason": "The provided passages do not include the provisions (e.g., 35 U.S.C. \u00a7\u00a7 315(a), 325(a)) that address how a prior civil action challenging validity affects filing a review petition, so the question cannot be answered from them.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-35:288:0",
+   "usc-35:321:0",
+   "usc-35:326:2",
+   "usc-35:306:0",
+   "usc-35:325:1",
+   "usc-35:282:1",
+   "usc-35:316:2",
+   "usc-35:144:0"
+  ]
+ },
+ {
+  "id": "h020",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Generally, a patent application is kept confidential, but it is published promptly after 18 months from the earliest filing date for which a benefit is sought, or earlier if the applicant requests. Exceptions: applications that are no longer pending, under a secrecy order, provisional applications, and design patent applications are not published. An application is also not published if the applicant certifies on filing that the invention won't be filed abroad or under a multilateral agreement requiring 18-month publication (the applicant may rescind this), and none is published if publication would harm national security.",
+  "citations": [
+   {
+    "passage_id": "usc-35:122:0",
+    "quote": "applications for patents shall be kept in confidence by the Patent and Trademark Office"
+   },
+   {
+    "passage_id": "usc-35:122:0",
+    "quote": "each application for a patent shall be published, in accordance with procedures deter mined by the Director, promptly after the expiration of a period of 18 months from the earliest filing date for which a benefit is sought under this title."
+   },
+   {
+    "passage_id": "usc-35:122:0",
+    "quote": "At the request of the applicant, an application may be published earlier than the end of such 18-month period."
+   },
+   {
+    "passage_id": "usc-35:122:0",
+    "quote": "An application shall not be published if that application is\u2014 (i) no longer pending; (ii) subject to a secrecy order under section 181; (iii) a provisional application filed under section 111(b); or (iv) an application for a design patent filed under chapter 16."
+   },
+   {
+    "passage_id": "usc-35:122:0",
+    "quote": "An applicant may rescind a request made under clause (i) at any time."
+   },
+   {
+    "passage_id": "usc-35:122:3",
+    "quote": "No application for patent shall be published under subsection (b)(1) if the publication or disclosure of such invention would be detrimental to the national security."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-35:122:0",
+   "usc-35:122:3",
+   "usc-35:122:2",
+   "usc-35:205:0",
+   "usc-35:122:1",
+   "usc-35:156:6",
+   "usc-35:151:0",
+   "usc-35:5:1"
+  ]
+ },
+ {
+  "id": "h021",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Possibly not. Under 35 U.S.C. \u00a7273, a person who, in good faith, commercially used a process (or a machine, manufacture, or composition used in a manufacturing or commercial process) in the United States at least 1 year before the earlier of the patent's effective filing date or its public disclosure has a defense to infringement. The commercial use may be internal, so secrecy is not itself disqualifying on the text provided. You bear the burden of proving the defense by clear and convincing evidence. The passages do not cover the rest of \u00a7273 (e.g., exceptions or limits), so this is incomplete. This is general information from statute text, not legal advice.",
+  "citations": [
+   {
+    "passage_id": "usc-35:273:0",
+    "quote": "A person shall be entitled to a defense under section 282(b) with respect to subject matter consisting of a process, or consisting of a machine, manufacture, or composition of matter used in a manufacturing or other commercial process, that would otherwise infringe a claimed invention being asserted against the person if"
+   },
+   {
+    "passage_id": "usc-35:273:0",
+    "quote": "such person, acting in good faith, commercially used the subject matter in the United States, either in connection with an internal commercial use or an actual arm's length sale or other arm's length commercial transfer of a useful end result of such commercial use"
+   },
+   {
+    "passage_id": "usc-35:273:0",
+    "quote": "such commercial use occurred at least 1 year before the earlier of either"
+   },
+   {
+    "passage_id": "usc-35:273:0",
+    "quote": "A person asserting a defense under this section shall have the burden of establishing the defense by clear and convincing evidence."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-35:287:3",
+   "usc-35:287:4",
+   "usc-35:295:0",
+   "usc-35:287:1",
+   "usc-35:273:0",
+   "usc-35:271:8",
+   "usc-35:287:5",
+   "usc-35:271:2"
+  ]
+ },
+ {
+  "id": "h022",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "If the patentee (or those making or selling the patented article for or under them) fails to mark the article as the statute prescribes, no damages can be recovered in an infringement action unless the patentee proves the infringer was notified of the infringement and continued to infringe. Even then, damages are recoverable only for infringement occurring after that notice. Filing an infringement action itself counts as notice.",
+  "citations": [
+   {
+    "passage_id": "usc-35:287:0",
+    "quote": "In the event of failure so to mark, no damages shall be recovered by the patentee in any action for infringement, except on proof that the infringer was notified of the infringement and continued to infringe thereafter, in which event damages may be recovered only for infringement occurring after such notice."
+   },
+   {
+    "passage_id": "usc-35:287:0",
+    "quote": "Filing of an action for infringement shall constitute such notice."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-35:287:3",
+   "usc-35:287:0",
+   "usc-35:292:0",
+   "usc-35:292:1",
+   "usc-35:287:4",
+   "usc-35:271:1",
+   "usc-35:287:1",
+   "usc-35:287:5"
+  ]
+ },
+ {
+  "id": "h023",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Yes. Under 35 U.S.C. \u00a7156, the term of an eligible patent is extended by the regulatory review period for the approved product that occurs after the patent issued. That extension is subject to limits: the period is reduced for lack of due diligence, only half of the testing-phase time counts, and the total patent life after approval cannot exceed fourteen years. The owner must apply within 60 days after the product receives permission for commercial marketing or use.",
+  "citations": [
+   {
+    "passage_id": "usc-35:156:2",
+    "quote": "The term of a patent eligible for extension under subsection (a) shall be extended by the time equal to the regulatory review period for the approved product which period occurs after the date the patent is issued"
+   },
+   {
+    "passage_id": "usc-35:156:3",
+    "quote": "each period of the regulatory review period shall be reduced by any period determined under subsection (d)(2)(B) during which the applicant for the patent extension did not act with due diligence during such period of the regulatory review period"
+   },
+   {
+    "passage_id": "usc-35:156:3",
+    "quote": "the period of extension shall include only one-half of the time remaining in the periods described in paragraphs (1)(B)(i), (2)(B)(i), (3)(B)(i), (4)(B)(i), and (5)(B)(i) of subsection (g)"
+   },
+   {
+    "passage_id": "usc-35:156:3",
+    "quote": "the period of extension shall be reduced so that the total of both such periods does not exceed fourteen years"
+   },
+   {
+    "passage_id": "usc-35:156:3",
+    "quote": "such an application may only be submitted within the sixty-day period beginning on the date the product received permission under the provision of law under which the applicable regulatory review period occurred for commercial marketing or use"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-35:156:17",
+   "usc-35:156:3",
+   "usc-35:154:2",
+   "usc-35:156:5",
+   "usc-35:156:13",
+   "usc-35:271:4",
+   "usc-35:156:10",
+   "usc-35:156:2"
+  ]
+ },
+ {
+  "id": "h024",
+  "answerable": true,
+  "refused": true,
+  "reason": "The passages cover service of process on a non-resident defendant with a regular and established place of business in a district, but they do not contain a general venue provision (such as 28 U.S.C. \u00a71400(b)) stating where a patent infringement suit may be brought.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-35:271:1",
+   "usc-35:271:0",
+   "usc-28:1694:0",
+   "usc-35:281:0",
+   "usc-35:288:0",
+   "usc-35:296:0",
+   "usc-35:289:0",
+   "usc-28:1928:0"
+  ]
+ },
+ {
+  "id": "h025",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Yes. Under 28 U.S.C. \u00a71404(a), a district court may transfer a civil action to another district or division where it might have been brought, or to which all parties consented, for the convenience of parties and witnesses and in the interest of justice. For multidistrict litigation, \u00a71407(a) separately lets the judicial panel transfer actions with common questions of fact for coordinated pretrial proceedings when it finds this serves the convenience of parties and witnesses.",
+  "citations": [
+   {
+    "passage_id": "usc-28:1404:0",
+    "quote": "For the convenience of parties and witnesses, in the interest of justice, a district court may transfer any civil action to any other district or division where it might have been brought or to any district or division to which all parties have consented."
+   },
+   {
+    "passage_id": "usc-28:1407:0",
+    "quote": "Such transfers shall be made by the judicial panel on multidistrict litigation authorized by this section upon its determination that transfers for such proceedings will be for the convenience of parties and witnesses and will promote the just and efficient conduct of such actions."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:1407:0",
+   "usc-28:1407:1",
+   "usc-28:1412:0",
+   "usc-28:3202:3",
+   "usc-28:455:0",
+   "usc-28:1404:0",
+   "usc-28:2503:0",
+   "usc-28:2506:0"
+  ]
+ },
+ {
+  "id": "h026",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Under 28 U.S.C. \u00a71407, civil actions pending in different districts that share common questions of fact may be transferred to a single district for coordinated or consolidated pretrial proceedings. The judicial panel on multidistrict litigation makes the transfer, after finding that it will serve the convenience of parties and witnesses and promote the just and efficient conduct of the actions. The panel's transfer order must follow a hearing and be supported by findings of fact and conclusions of law. Each transferred action is remanded to its original district at or before the end of pretrial proceedings, unless it has already been terminated.",
+  "citations": [
+   {
+    "passage_id": "usc-28:1407:0",
+    "quote": "When civil actions involving one or more common questions of fact are pending in different districts, such actions may be transferred to any district for coordinated or consolidated pretrial proceedings."
+   },
+   {
+    "passage_id": "usc-28:1407:0",
+    "quote": "Such transfers shall be made by the judicial panel on multidistrict litigation authorized by this section upon its determination that transfers for such proceedings will be for the convenience of parties and witnesses and will promote the just and efficient conduct of such actions."
+   },
+   {
+    "passage_id": "usc-28:1407:2",
+    "quote": "The panel's order of transfer shall be based upon a record of such hearing at which material evidence may be offered by any party to an action pending in any district that would be affected by the proceedings under this section, and shall be supported by findings of fact and conclusions of law based upon such record."
+   },
+   {
+    "passage_id": "usc-28:1407:0",
+    "quote": "Each action so transferred shall be remanded by the panel at or before the conclusion of such pretrial proceedings to the district from which it was transferred unless it shall have been previously terminated"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:1407:0",
+   "usc-28:1692:0",
+   "usc-28:1354:0",
+   "usc-28:1449:0",
+   "usc-28:1332:0",
+   "usc-28:1407:2",
+   "usc-28:754:0",
+   "usc-35:299:0"
+  ]
+ },
+ {
+  "id": "h027",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Yes. Under 28 U.S.C. \u00a71453(b), a class action may be removed to federal district court by any defendant without the consent of all defendants, and regardless of whether any defendant is a citizen of the forum State. Removal is made in accordance with section 1446.",
+  "citations": [
+   {
+    "passage_id": "usc-28:1453:0",
+    "quote": "except that such action may be removed by any defendant without the consent of all defendants"
+   },
+   {
+    "passage_id": "usc-28:1453:0",
+    "quote": "A class action may be removed to a district court of the United States in accordance with section 1446"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:1715:1",
+   "usc-28:1332:3",
+   "usc-28:1332:4",
+   "usc-28:1711:0",
+   "usc-28:1715:3",
+   "usc-17:1506:14",
+   "usc-28:1712:1",
+   "usc-28:1453:0"
+  ]
+ },
+ {
+  "id": "h028",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Yes. Under 28 U.S.C. \u00a71631, when a court finds it lacks jurisdiction, it must transfer the action or appeal to another court where it could have been brought if transfer is in the interest of justice. The case then proceeds as if it had been filed in the transferee court on the original filing date. Separately, \u00a71919 allows a court that dismisses for want of jurisdiction to order payment of just costs.",
+  "citations": [
+   {
+    "passage_id": "usc-28:1631:0",
+    "quote": "the court shall, if it is in the interest of justice, transfer such action or appeal to any other such court (or, for cases within the jurisdiction of the United States Tax Court, to that court) in which the action or appeal could have been brought at the time it was filed or noticed"
+   },
+   {
+    "passage_id": "usc-28:1631:0",
+    "quote": "the action or appeal shall proceed as if it had been filed in or noticed for the court to which it is transferred on the date upon which it was actually filed in or noticed for the court from which it is transferred."
+   },
+   {
+    "passage_id": "usc-28:1919:0",
+    "quote": "such court may order the payment of just costs."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:1631:0",
+   "usc-11:707:12",
+   "usc-28:1919:0",
+   "usc-11:1208:0",
+   "usc-11:1307:0",
+   "usc-11:707:0",
+   "usc-11:1112:0",
+   "usc-28:1367:1"
+  ]
+ },
+ {
+  "id": "h029",
+  "answerable": true,
+  "refused": true,
+  "reason": "The passages do not include the general catch-all limitations provision (28 U.S.C. \u00a71658) for federal claims lacking their own deadline; they only cover specific limits such as \u00a72501, \u00a72415 and \u00a72244.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:2415:3",
+   "usc-28:2501:0",
+   "usc-28:2266:1",
+   "usc-28:2244:3",
+   "usc-28:2266:0",
+   "usc-28:2266:3",
+   "usc-28:2416:0",
+   "usc-28:2679:4"
+  ]
+ },
+ {
+  "id": "h030",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Generally yes, for matters under U.S. law that require or permit proof by a sworn declaration, verification, certificate, statement, oath, or affidavit in writing, you may use an unsworn declaration signed as true under penalty of perjury and dated, in substantially the prescribed form. Exceptions: depositions, oaths of office, and oaths that must be taken before a specified official other than a notary public. The form differs depending on whether you sign inside or outside the United States. This applies to federal law matters only; the passages do not address state-law requirements. This is general information, not legal advice.",
+  "citations": [
+   {
+    "passage_id": "usc-28:1746:0",
+    "quote": "such matter may, with like force and effect, be supported, evidenced, established, or proved by the unsworn declaration, certificate, verification, or statement, in writing of such person which is subscribed by him, as true under penalty of perjury, and dated, in substantially the following form"
+   },
+   {
+    "passage_id": "usc-28:1746:0",
+    "quote": "(other than a deposition, or an oath of office, or an oath required to be taken before a specified official other than a notary public)"
+   },
+   {
+    "passage_id": "usc-28:1746:0",
+    "quote": "I declare (or certify, verify, or state) under penalty of perjury that the foregoing is true and correct. Executed on (date). (Signature)"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:1746:0",
+   "usc-11:110:1",
+   "usc-11:110:0",
+   "usc-11:110:3",
+   "usc-17:1326:0",
+   "usc-28:1691:0",
+   "usc-17:1327:0",
+   "usc-28:2242:0"
+  ]
+ },
+ {
+  "id": "h031",
+  "answerable": true,
+  "refused": true,
+  "reason": "The provided passages do not include 28 U.S.C. \u00a71654 or any other provision addressing a party's right to appear pro se in federal court.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:1494:0",
+   "usc-28:3101:4",
+   "usc-28:2261:1",
+   "usc-28:3202:2",
+   "usc-28:1500:0",
+   "usc-28:2506:0",
+   "usc-28:594:8",
+   "usc-28:2250:0"
+  ]
+ },
+ {
+  "id": "h032",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "The passages describe two routes. First, proceedings in forma pauperis under 28 U.S.C. \u00a71915: a prisoner cannot be barred from bringing a civil action or appeal just because he has no assets to pay the initial partial filing fee, and the court may ask an attorney to represent a person unable to afford counsel. The court must still dismiss the case if the poverty allegation is untrue or the action is frivolous, fails to state a claim, or seeks relief from an immune defendant. Prisoners with 3 or more prior dismissals on those grounds are generally barred unless in imminent danger of serious physical injury. Second, in bankruptcy, a court may waive the chapter 7 filing fee for an individual with income under 150 percent of the poverty line who cannot pay in installments.",
+  "citations": [
+   {
+    "passage_id": "usc-28:1915:2",
+    "quote": "no event shall a prisoner be prohibited from bringing a civil action or appealing a civil or criminal judgment for the reason that the prisoner has no assets and no means by which to pay the initial partial filing fee."
+   },
+   {
+    "passage_id": "usc-28:1915:2",
+    "quote": "The court may request an attorney to represent any person unable to afford counsel."
+   },
+   {
+    "passage_id": "usc-28:1915:3",
+    "quote": "the court shall dismiss the case at any time if the court determines that\u2014 (A) the allegation of poverty is untrue; or (B) the action or appeal\u2014 (i) is frivolous or malicious; (ii) fails to state a claim on which relief may be granted; or (iii) seeks monetary relief against a defendant who is immune from such relief."
+   },
+   {
+    "passage_id": "usc-28:1915:3",
+    "quote": "unless the prisoner is under imminent danger of serious physical injury."
+   },
+   {
+    "passage_id": "usc-28:1930:4",
+    "quote": "the district court or the bankruptcy court may waive the filing fee in a case under chapter 7 of title 11 for an individual if the court determines that such individual has income less than 150 percent of the income official poverty line"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-11:527:2",
+   "usc-28:1915:3",
+   "usc-28:1930:4",
+   "usc-28:1914:0",
+   "usc-11:110:4",
+   "usc-11:110:3",
+   "usc-28:1915:2",
+   "usc-28:1875:1"
+  ]
+ },
+ {
+  "id": "h033",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Yes. Under 28 U.S.C. \u00a71927, a court may require an attorney or other person admitted to conduct cases in U.S. courts who unreasonably and vexatiously multiplies proceedings to personally pay the excess costs, expenses, and attorneys' fees reasonably incurred because of that conduct.",
+  "citations": [
+   {
+    "passage_id": "usc-28:1927:0",
+    "quote": "Any attorney or other person admitted to conduct cases in any court of the United States or any Territory thereof who so multiplies the proceedings in any case unreasonably and vexatiously may be required by the court to satisfy personally the excess costs, expenses, and attorneys' fees reasonably incurred because of such conduct."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:463:0",
+   "usc-28:1927:0",
+   "usc-28:1915:3",
+   "usc-28:2412:0",
+   "usc-28:1921:1",
+   "usc-28:594:4",
+   "usc-28:1337:0",
+   "usc-28:1930:3"
+  ]
+ },
+ {
+  "id": "h034",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Under 28 U.S.C. \u00a71961, interest is allowed on any money judgment in a civil case recovered in a district court. It runs from the date the judgment is entered, at a rate equal to the weekly average 1-year constant maturity Treasury yield for the calendar week preceding the date of the judgment. Interest is computed daily to the date of payment and compounded annually. Different rules apply to internal revenue tax cases, which use the section 6621 underpayment or overpayment rate, and to Court of Federal Claims judgments.",
+  "citations": [
+   {
+    "passage_id": "usc-28:1961:0",
+    "quote": "Interest shall be allowed on any money judgment in a civil case recovered in a district court."
+   },
+   {
+    "passage_id": "usc-28:1961:0",
+    "quote": "Such interest shall be calculated from the date of the entry of the judgment, at a rate equal to the weekly average 1-year constant maturity Treasury yield, as published by the Board of Governors of the Federal Reserve System, for the calendar week preceding."
+   },
+   {
+    "passage_id": "usc-28:1961:0",
+    "quote": "Interest shall be computed daily to the date of payment except as provided in section 2516(b) of this title and section 1304(b) of title 31, and shall be compounded annually."
+   },
+   {
+    "passage_id": "usc-28:1961:0",
+    "quote": "This section shall not apply in any judgment of any court with respect to any internal revenue tax case."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:1961:0",
+   "usc-28:2516:0",
+   "usc-28:2644:0",
+   "usc-28:1961:1",
+   "usc-28:2411:0",
+   "usc-11:363:7",
+   "usc-28:2467:4",
+   "usc-28:2467:2"
+  ]
+ },
+ {
+  "id": "h035",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Under 28 U.S.C. \u00a72107, when the United States, a U.S. agency, or a U.S. officer or employee (sued in an official capacity, or in an individual capacity for acts in connection with federal duties) is a party to a civil action, the time to file a notice of appeal to the court of appeals is 60 days from entry of the judgment, order, or decree, rather than the usual 30 days. The district court may extend this on motion for excusable neglect or good cause.",
+  "citations": [
+   {
+    "passage_id": "usc-28:2107:0",
+    "quote": "the time as to all parties shall be 60 days from such entry if one of the parties is\u2014 (1) the United States; (2) a United States agency; (3) a United States officer or employee sued in an official capacity"
+   },
+   {
+    "passage_id": "usc-28:2107:0",
+    "quote": "no appeal shall bring any judgment, order or decree in an action, suit or proceeding of a civil nature before a court of appeals for review unless notice of appeal is filed, within thirty days after the entry of such judgment, order or decree."
+   },
+   {
+    "passage_id": "usc-28:2107:0",
+    "quote": "The district court may, upon motion filed not later than 30 days after the expiration of the time otherwise set for bringing appeal, extend the time for appeal upon a showing of excusable neglect or good cause."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:2107:0",
+   "usc-28:2101:0",
+   "usc-28:2645:0",
+   "usc-35:145:0",
+   "usc-28:3202:1",
+   "usc-28:2107:1",
+   "usc-35:146:0",
+   "usc-35:141:0"
+  ]
+ },
+ {
+  "id": "h036",
+  "answerable": true,
+  "refused": true,
+  "reason": "The provided passages do not include the Declaratory Judgment Act (28 U.S.C. \u00a72201) or any provision addressing declaratory relief without damages.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-35:183:1",
+   "usc-28:1495:0",
+   "usc-28:1357:0",
+   "usc-28:3101:3",
+   "usc-28:3101:4",
+   "usc-28:3202:2",
+   "usc-28:2679:0",
+   "usc-28:1343:0"
+  ]
+ },
+ {
+  "id": "h037",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "A federal prisoner claiming a sentence violates the Constitution or federal law may file a motion in the sentencing court to vacate, set aside, or correct the sentence under 28 U.S.C. \u00a72255. The motion generally must be filed within one year of the latest of the triggering dates listed (e.g., finality of judgment). The court must hold a prompt hearing unless the record conclusively shows no relief is due, and an appeal may be taken to the court of appeals. A habeas application generally cannot be used instead unless the \u00a72255 motion remedy is inadequate or ineffective.",
+  "citations": [
+   {
+    "passage_id": "usc-28:2255:0",
+    "quote": "may move the court which imposed the sentence to vacate, set aside or correct the sentence."
+   },
+   {
+    "passage_id": "usc-28:2255:1",
+    "quote": "A 1-year period of limitation shall apply to a motion under this section."
+   },
+   {
+    "passage_id": "usc-28:2255:0",
+    "quote": "An appeal may be taken to the court of appeals from the order entered on the motion as from a final judgment on application for a writ of habeas corpus."
+   },
+   {
+    "passage_id": "usc-28:2255:1",
+    "quote": "unless it also appears that the remedy by motion is inadequate or ineffective to test the legality of his detention."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:2255:0",
+   "usc-28:2255:1",
+   "usc-28:2261:1",
+   "usc-28:2264:0",
+   "usc-28:2261:0",
+   "usc-28:1867:2",
+   "usc-28:2262:0",
+   "usc-28:530C:6"
+  ]
+ },
+ {
+  "id": "h038",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Generally no. Under 28 U.S.C. \u00a72283, a federal court may not enjoin state court proceedings except in three situations: where expressly authorized by an Act of Congress, where necessary in aid of its jurisdiction, or to protect or effectuate its judgments.",
+  "citations": [
+   {
+    "passage_id": "usc-28:2283:0",
+    "quote": "A court of the United States may not grant an injunction to stay proceedings in a State court except as expressly authorized by Act of Congress, or where necessary in aid of its jurisdiction, or to protect or effectuate its judgments."
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:1292:2",
+   "usc-28:2504:0",
+   "usc-28:1342:0",
+   "usc-28:1292:1",
+   "usc-28:1292:3",
+   "usc-28:2283:0",
+   "usc-28:2254:1",
+   "usc-28:2351:0"
+  ]
+ },
+ {
+  "id": "h039",
+  "answerable": true,
+  "refused": false,
+  "reason": "",
+  "answer": "Generally no. The FTCA chapter and section 1346(b) do not apply to any claim arising out of the loss, miscarriage, or negligent transmission of letters or postal matter, so a claim for lost mail is excluded from FTCA suits. (This is general information from the statute text, not legal advice.)",
+  "citations": [
+   {
+    "passage_id": "usc-28:2680:0",
+    "quote": "Any claim arising out of the loss, miscarriage, or negligent transmission of letters or postal matter."
+   },
+   {
+    "passage_id": "usc-28:2680:0",
+    "quote": "The provisions of this chapter and section 1346(b) of this title shall not apply to\u2014"
+   }
+  ],
+  "retrieved_ids": [
+   "usc-28:2675:0",
+   "usc-28:1498:3",
+   "usc-28:2502:0",
+   "usc-28:1346:0",
+   "usc-28:2680:0",
+   "usc-35:286:0",
+   "usc-28:3101:4",
+   "usc-28:2680:1"
+  ]
+ },
+ {
+  "id": "h040",
+  "answerable": true,
+  "refused": true,
+  "reason": "The provided passages address Court of Federal Claims judges' assignment, removal, and retirement, but none address recusal or disqualification of a judge from a case.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:174:0",
+   "usc-28:1292:2",
+   "usc-28:2349:1",
+   "usc-28:176:0",
+   "usc-28:177:0",
+   "usc-28:178:1",
+   "usc-28:178:0",
+   "usc-28:2106:0"
+  ]
+ },
+ {
+  "id": "h049",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages do not address employer retaliation or whistleblower protections; they cover DOJ operations, foreign sovereign immunity, and copyright matters.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:529:0",
+   "usc-28:1605:8",
+   "usc-28:528:0",
+   "usc-28:607:0",
+   "usc-17:910:1",
+   "usc-28:535:0",
+   "usc-28:538:0",
+   "usc-17:506:0"
+  ]
+ },
+ {
+  "id": "h050",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages cover pre-1972 sound recordings, statutory licensing, court reporters, and discovery, and say nothing about recording phone calls or consent requirements.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-17:1401:14",
+   "usc-17:114:8",
+   "usc-28:2507:0",
+   "usc-17:1401:4",
+   "usc-17:114:19",
+   "usc-28:753:3",
+   "usc-17:1401:6",
+   "usc-17:1401:0"
+  ]
+ },
+ {
+  "id": "h051",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages do not address background check requirements for firearm purchases from dealers; they only cover records exchange, ATF's structure, and funding matters.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:534:0",
+   "usc-28:3202:1",
+   "usc-28:530C:4",
+   "usc-28:2409a:4",
+   "usc-28:599A:1",
+   "usc-28:524:10",
+   "usc-35:202:8",
+   "usc-28:599A:0"
+  ]
+ },
+ {
+  "id": "h052",
+  "answerable": false,
+  "refused": true,
+  "reason": "The passages cover patent term extensions and related FDA regulatory review definitions, and say nothing about food labeling or allergen requirements.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-35:156:12",
+   "usc-35:156:14",
+   "usc-35:156:13",
+   "usc-35:156:18",
+   "usc-35:156:1",
+   "usc-35:156:6",
+   "usc-35:287:7",
+   "usc-35:156:17"
+  ]
+ },
+ {
+  "id": "h053",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages are from Title 28 on courts, the Sentencing Commission, and judicial retirement, and say nothing about child labor or hour limits for teenage workers.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:604:11",
+   "usc-28:995:1",
+   "usc-28:994:7",
+   "usc-28:2266:4",
+   "usc-28:994:2",
+   "usc-28:627:2",
+   "usc-28:611:2",
+   "usc-28:2266:2"
+  ]
+ },
+ {
+  "id": "h054",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages concern venue, limitations periods, juror fees, bankruptcy, and similar topics, and contain nothing about commercial truck driver hours-of-service limits.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:1408:0",
+   "usc-28:2501:0",
+   "usc-28:1871:1",
+   "usc-11:523:1",
+   "usc-28:2462:0",
+   "usc-11:546:2",
+   "usc-28:2409a:3",
+   "usc-28:594:2"
+  ]
+ },
+ {
+  "id": "h055",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages do not address employer obligations to provide reasonable accommodations for employee disabilities; they cover court facilities, juror employment protection, bankruptcy, and judicial retirement.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:462:0",
+   "usc-28:1875:1",
+   "usc-11:1114:7",
+   "usc-11:109:5",
+   "usc-28:372:1",
+   "usc-11:522:6",
+   "usc-28:372:0",
+   "usc-28:371:3"
+  ]
+ },
+ {
+  "id": "h056",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages cover bankruptcy, patent, copyright, and securities provisions and say nothing about data breach obligations.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-11:524:13",
+   "usc-28:589b:0",
+   "usc-35:41:9",
+   "usc-17:1202:2",
+   "usc-17:1201:6",
+   "usc-17:512:10",
+   "usc-17:1506:12",
+   "usc-11:751:0"
+  ]
+ },
+ {
+  "id": "h057",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages do not include any provision on the time limit for bringing an arrested person to trial (such as the Speedy Trial Act).",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:3101:4",
+   "usc-28:3202:2",
+   "usc-28:3202:1",
+   "usc-28:2261:0",
+   "usc-35:286:0",
+   "usc-28:3101:3",
+   "usc-28:2255:2",
+   "usc-35:133:0"
+  ]
+ },
+ {
+  "id": "h058",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages concern habeas appeals, patents, bankruptcy plan confirmation, and forfeiture, and say nothing about the requirements for a valid will.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:2253:0",
+   "usc-35:282:0",
+   "usc-11:1173:0",
+   "usc-11:1191:0",
+   "usc-11:1125:2",
+   "usc-11:1325:2",
+   "usc-11:1129:0",
+   "usc-28:1355:1"
+  ]
+ },
+ {
+  "id": "h059",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages address other topics (quiet title actions, removal, jury selection, habeas, etc.) and contain nothing about when deadly force is permitted in self-defense.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:2409a:2",
+   "usc-28:1442a:0",
+   "usc-28:530C:4",
+   "usc-28:5001:0",
+   "usc-28:568:0",
+   "usc-28:2241:2",
+   "usc-28:1863:6",
+   "usc-28:2255:1"
+  ]
+ },
+ {
+  "id": "h060",
+  "answerable": false,
+  "refused": true,
+  "reason": "The provided passages do not address the federal legal status of marijuana or controlled substances.",
+  "answer": "",
+  "citations": [],
+  "retrieved_ids": [
+   "usc-28:530C:6",
+   "usc-35:207:0",
+   "usc-28:599A:1",
+   "usc-28:1349:0",
+   "usc-28:1338:0",
+   "usc-28:599A:0",
+   "usc-35:287:7",
+   "usc-28:2680:0"
+  ]
+ }
+]
