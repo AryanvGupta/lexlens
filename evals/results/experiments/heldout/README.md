@@ -1,6 +1,6 @@
 # Held-out results
 
-Run once each, per `evals/dataset/HELDOUT-PROTOCOL.md` (frozen in commit 9adba0c before any run; `heldout.sha256` checks the file).
+Run once each, per `evals/dataset/HELDOUT-PROTOCOL.md` (frozen in commit 4a61c10 before any run; `heldout.sha256` checks the file).
 
 - `retrieval/` : `EVAL_DATASET=evals/dataset/heldout.jsonl make dev-eval`-style run of `evals/run_eval.py` (dense, lexical, hybrid, rerank on the 40 answerable questions).
 - `answers-A-hybrid-k8/` : `ANSWER_MODE=hybrid ANSWER_K=8` answer eval (previous default).
