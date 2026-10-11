@@ -1,0 +1,7 @@
+mean top-12 overlap 12.00/12  min 12
+questions: 58
+top-12 id set differs: 0 
+top-1 differs: 0 
+mean Spearman 1.0000  min 1.0000
+mean Pearson  1.0000  min 1.0000
+max |score diff| overall 0.000

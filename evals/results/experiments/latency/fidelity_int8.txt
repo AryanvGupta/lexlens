@@ -1,0 +1,8 @@
+int8: 38 dynamic-quantized Linear modules
+mean top-12 overlap 11.12/12  min 9
+questions: 58
+top-12 id set differs: 40 q001 q003 q004 q005 q007 q008 q009 q010 q011 q012 q013 q015 q016 q020 q021 q022 q023 q024 q025 q028 q029 q031 q032 q033 q035 q039 q040 q041 q042 q044 q045 q046 q047 q048 q049 q050 q051 q052 q053 q055
+top-1 differs: 9 q006 q020 q031 q032 q033 q036 q049 q052 q058
+mean Spearman 0.9790  min 0.8247
+mean Pearson  0.9912  min 0.9435
+max |score diff| overall 1.760
