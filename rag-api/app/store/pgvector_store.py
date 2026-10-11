@@ -93,8 +93,11 @@ class PgVectorStore(VectorStore):
             return [_hit(r) for r in cur.fetchall()]
 
     def search_bm25(self, query, k):
-        idx = bm25.index(self.dsn, self.table, self.count())
         with self._conn() as c:
+            version = c.execute(
+                f"SELECT count(*), '{self.table}'::regclass::oid FROM {self.table}"
+            ).fetchone()
+            idx = bm25.index(self.dsn, self.table, tuple(version))
             terms = [
                 r[0]
                 for r in c.execute(

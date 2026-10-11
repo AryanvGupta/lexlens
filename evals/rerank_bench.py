@@ -52,7 +52,8 @@ def build(variant: str):
 def main(path: str, variants: list[str], n: int = 100) -> None:
     """Round-robin timing: for each question every variant is timed back to back, so machine
     drift hits all variants equally (sequential per-variant runs drifted by +/-40%)."""
-    data = json.load(open(path))[:n]
+    with open(path) as f:
+        data = json.load(f)[:n]
     pairs = [
         [(d["question"], f"{h['source']['title']}\n{h['text']}") for h in d["hits"]]
         for d in data
@@ -73,7 +74,7 @@ def main(path: str, variants: list[str], n: int = 100) -> None:
                 scores[v].append([float(x) for x in s])
     for v in variants:
         t = sorted(ts[v])
-        p95 = t[min(len(t) - 1, int(round(0.95 * len(t))) - 1)]
+        p95 = t[min(len(t) - 1, round(0.95 * len(t)) - 1)]
         print(
             f"{v:22s} n={len(t)} median={statistics.median(t):.3f}s p95={p95:.3f}s "
             f"mean={statistics.mean(t):.3f}s",

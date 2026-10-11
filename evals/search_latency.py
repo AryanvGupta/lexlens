@@ -12,8 +12,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "rag-api"))
 
-from app.retrieval.search import search  # noqa: E402
-from app.store.pgvector_store import PgVectorStore  # noqa: E402
+from app.retrieval.search import search
+from app.store.pgvector_store import PgVectorStore
 
 K = 12
 qs = [

@@ -45,7 +45,7 @@ test:
 	set -a; . ./.env 2>/dev/null; set +a; cd mcp-server && npm test
 
 lint:
-	cd rag-api && uv run ruff check . && uv run ruff format --check .
+	cd rag-api && uv run ruff check . ../evals && uv run ruff format --check . ../evals
 	cd mcp-server && npm run lint
 	kubectl kustomize k8s/overlays/local > /dev/null
 

@@ -14,9 +14,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "rag-api"))
 
-import psycopg  # noqa: E402
-from app.retrieval.search import search  # noqa: E402
-from app.store.pgvector_store import PgVectorStore  # noqa: E402
+import psycopg
+
+from app.retrieval.search import search
+from app.store.pgvector_store import PgVectorStore
 
 # question id -> (question, gold section, phrase found only in the chunk that answers it)
 PROBES = {
@@ -50,7 +51,7 @@ def main() -> None:
     dsn = os.environ["DATABASE_URL"]
     store = PgVectorStore(dsn)
     with psycopg.connect(dsn) as c:
-        print(f"| question | answering chunk | " + " | ".join(MODES) + " |")
+        print("| question | answering chunk | " + " | ".join(MODES) + " |")
         print("|---|---|" + "---|" * len(MODES))
         for qid, (question, sec, phrase) in PROBES.items():
             ids = [

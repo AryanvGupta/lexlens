@@ -16,18 +16,25 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "rag-api"))
 
-from app.config import GEN_EFFORT, GEN_MODEL, JUDGE_MODEL  # noqa: E402
-from app.generation.ask import DEFAULT_K, DEFAULT_MODE  # noqa: E402
-from app.generation.ask import ask  # noqa: E402
-from app.generation.llm import anthropic_call  # noqa: E402
-from app.generation.prompt import SCHEMA, SYSTEM, build_user  # noqa: E402
-from app.metrics import section_key  # noqa: E402
-from app.retrieval.search import search  # noqa: E402
-from app.store.pgvector_store import PgVectorStore  # noqa: E402
+from app.config import GEN_EFFORT, GEN_MODEL, JUDGE_MODEL
+from app.generation.ask import (
+    DEFAULT_K,
+    DEFAULT_MODE,
+    ask,
+)
+from app.generation.llm import anthropic_call
+from app.generation.prompt import SYSTEM, build_user
+from app.metrics import section_key
+from app.retrieval.search import search
+from app.store.pgvector_store import PgVectorStore
 
 RES = ROOT / "evals/results"
-CACHE = Path(os.environ.get("EVAL_CACHE", RES / "cache"))  # git-ignored; shared by every config. Point other checkouts/replicates at a dir via EVAL_CACHE
-OUT = Path(os.environ.get("EVAL_RESULTS", RES))  # experiments write elsewhere, baseline stays untouched
+CACHE = Path(
+    os.environ.get("EVAL_CACHE", RES / "cache")
+)  # git-ignored; shared by every config. Point other checkouts/replicates at a dir via EVAL_CACHE
+OUT = Path(
+    os.environ.get("EVAL_RESULTS", RES)
+)  # experiments write elsewhere, baseline stays untouched
 K = int(os.environ.get("ANSWER_K", DEFAULT_K))  # passages given to the model
 MODE = os.environ.get("ANSWER_MODE", DEFAULT_MODE)  # retrieval mode behind /ask
 PRICES = {  # USD per 1M tokens (input, output); cache discounts ignored
@@ -115,10 +122,7 @@ def pct(xs, p):
 
 def estimate(store, qs):
     toks = [
-        len(
-            SYSTEM
-            + build_user(q["question"], search(store, q["question"], K, MODE))
-        )
+        len(SYSTEM + build_user(q["question"], search(store, q["question"], K, MODE)))
         / CHARS_PER_TOKEN
         for q in qs
     ]

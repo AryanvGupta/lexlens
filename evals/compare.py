@@ -16,7 +16,9 @@ tol = float(args[args.index("--tol") + 1]) if "--tol" in args else 0.01
 drops_only = "--drops-only" in args
 
 text = Path(args[0]).read_text()
-measured = json.loads(text.split("--- JSON ---", 1)[1] if "--- JSON ---" in text else text)
+measured = json.loads(
+    text.split("--- JSON ---", 1)[1] if "--- JSON ---" in text else text
+)
 committed = json.loads((Path(__file__).parent / "results/retrieval.json").read_text())
 
 bad = 0
@@ -26,10 +28,14 @@ for mode, metrics in committed["metrics"].items():
         got = measured["metrics"][mode][name]
         off = (want - got > tol) if drops_only else (abs(got - want) > tol)
         bad += off
-        print(f"{mode + ' ' + name:<22}{want:>10.3f}{got:>10.3f}{got - want:>+8.3f}{'  <-- exceeds tolerance' if off else ''}")
+        print(
+            f"{mode + ' ' + name:<22}{want:>10.3f}{got:>10.3f}{got - want:>+8.3f}{'  <-- exceeds tolerance' if off else ''}"
+        )
 if measured["n"] != committed["n"]:
     bad += 1
     print(f"question count differs: {measured['n']} vs {committed['n']}")
 kind = "no drop beyond" if drops_only else "reproduced within +/-"
-print(f"\n{'OK: ' + kind + ' ' + str(tol) if not bad else 'MISMATCH: ' + str(bad) + ' metric(s) off'}")
+print(
+    f"\n{'OK: ' + kind + ' ' + str(tol) if not bad else 'MISMATCH: ' + str(bad) + ' metric(s) off'}"
+)
 sys.exit(1 if bad else 0)

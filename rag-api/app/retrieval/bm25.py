@@ -27,11 +27,12 @@ def load(dsn: str, table: str) -> tuple:
     return tf, dl, df
 
 
-def index(dsn: str, table: str, n_passages: int) -> tuple:
+def index(dsn: str, table: str, version: tuple) -> tuple:
+    """`version` is any value that changes when the table is rebuilt or changes size (the store passes
+    (row count, table oid): ingest drops and recreates the table, which gives it a new oid)."""
     hit = _cache.get((dsn, table))
-    if hit is None or hit[0] != n_passages:
-        # ponytail: staleness is detected by passage count only; a same-size re-ingest keeps the old index
-        hit = _cache[(dsn, table)] = (n_passages, load(dsn, table))
+    if hit is None or hit[0] != version:
+        hit = _cache[(dsn, table)] = (version, load(dsn, table))
     return hit[1]
 
 

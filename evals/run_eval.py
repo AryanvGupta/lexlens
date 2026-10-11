@@ -8,9 +8,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "rag-api"))
 
-from app.metrics import recall_at_k, reciprocal_rank  # noqa: E402
-from app.retrieval.search import search  # noqa: E402
-from app.store.pgvector_store import PgVectorStore  # noqa: E402
+from app.metrics import recall_at_k, reciprocal_rank
+from app.retrieval.search import search
+from app.store.pgvector_store import PgVectorStore
 
 MODES = ["dense", "lexical", "hybrid", "rerank"]
 KS = [1, 5, 10]

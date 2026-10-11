@@ -16,11 +16,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "rag-api"))
 
-from app.ingest.embed import embed_query  # noqa: E402
-from app.metrics import recall_at_k, reciprocal_rank  # noqa: E402
-from app.retrieval import bm25  # noqa: E402
-from app.retrieval.search import POOL, RRF_K, rrf  # noqa: E402
-from app.store.pgvector_store import PgVectorStore  # noqa: E402
+from app.ingest.embed import embed_query
+from app.metrics import recall_at_k, reciprocal_rank
+from app.retrieval import bm25
+from app.retrieval.search import POOL, RRF_K, rrf
+from app.store.pgvector_store import PgVectorStore
 
 KS = [1, 5, 10]
 DEPTH = 20
@@ -42,22 +42,38 @@ def main() -> None:
             }
         )
 
-    systems = {"dense": lambda c: c["dense"], "ts_rank (lexical)": lambda c: c["tsrank"], "bm25 (lexical)": lambda c: c["bm25"]}
+    systems = {
+        "dense": lambda c: c["dense"],
+        "ts_rank (lexical)": lambda c: c["tsrank"],
+        "bm25 (lexical)": lambda c: c["bm25"],
+    }
     for lex, name in (("tsrank", "ts_rank"), ("bm25", "bm25")):
         for wd in (1, 2, 3):
-            systems[f"hybrid {name} dense:lex={wd}:1"] = lambda c, lex=lex, wd=wd: rrf([c["dense"], c[lex]], weights=(wd, 1))
+            systems[f"hybrid {name} dense:lex={wd}:1"] = lambda c, lex=lex, wd=wd: rrf(
+                [c["dense"], c[lex]], weights=(wd, 1)
+            )
 
     def score(fn):
         ids = [[h["id"] for h in fn(c)[:DEPTH]] for c in cand]
-        per = [{f"recall@{k}": recall_at_k(i, q["gold_source_ids"], k) for k in KS} | {"mrr@20": reciprocal_rank(i, q["gold_source_ids"])} for q, i in zip(qs, ids)]
+        per = [
+            {f"recall@{k}": recall_at_k(i, q["gold_source_ids"], k) for k in KS}
+            | {"mrr@20": reciprocal_rank(i, q["gold_source_ids"])}
+            for q, i in zip(qs, ids)
+        ]
         return per
 
     results = {n: score(fn) for n, fn in systems.items()}
     base = results["hybrid ts_rank dense:lex=1:1"]
-    committed = json.loads((ROOT / "evals/results/retrieval.json").read_text())["metrics"]["hybrid"]
-    for m, v in committed.items():  # sanity: the 1:1 ts_rank row must be the product's hybrid
+    # sanity: the 1:1 ts_rank row must equal the old hybrid that was committed when this experiment ran
+    # (retrieval.json now holds the BM25 2:1 hybrid, so the old numbers are archived next to the results)
+    old = json.loads(
+        (ROOT / "evals/results/experiments/fusion/old-hybrid-baseline.json").read_text()
+    )["hybrid"]
+    for m, v in old.items():
         got = sum(r[m] for r in base) / len(base)
-        assert abs(got - v) < 1e-3, f"baseline mismatch on {m}: {got:.3f} vs committed {v:.3f}"
+        assert abs(got - v) < 1e-3, (
+            f"baseline mismatch on {m}: {got:.3f} vs archived {v:.3f}"
+        )
 
     cols = [f"recall@{k}" for k in KS] + ["mrr@20"]
     lines = [
@@ -71,14 +87,28 @@ def main() -> None:
     for n, per in results.items():
         up = sum(a["recall@5"] > b["recall@5"] for a, b in zip(per, base))
         dn = sum(a["recall@5"] < b["recall@5"] for a, b in zip(per, base))
-        lines.append(f"| {n} | " + " | ".join(f"{sum(r[c] for r in per) / len(per):.3f}" for c in cols) + f" | +{up} / -{dn} |")
+        lines.append(
+            f"| {n} | "
+            + " | ".join(f"{sum(r[c] for r in per) / len(per):.3f}" for c in cols)
+            + f" | +{up} / -{dn} |"
+        )
     # the 6 over-refused questions whose gold section was not in the top 8 (docs/what-broke.md #2); /ask uses k=8
     missed = {"q011", "q013", "q020", "q021", "q033", "q041"}
     idx = [i for i, q in enumerate(qs) if q["id"] in missed]
     assert len(idx) == len(missed)
-    lines += ["", f"Over-refusal check (what-broke #2): of the {len(idx)} questions whose gold section was missing from the top 8, how many a system retrieves in its top 8:", "", "| system | found in top 8 |", "|---|---|"]
+    lines += [
+        "",
+        f"Over-refusal check (what-broke #2): of the {len(idx)} questions whose gold section was missing from the top 8, how many a system retrieves in its top 8:",
+        "",
+        "| system | found in top 8 |",
+        "|---|---|",
+    ]
     for n, fn in systems.items():
-        hit = sum(recall_at_k([h["id"] for h in fn(cand[i])], qs[i]["gold_source_ids"], 8) == 1.0 for i in idx)
+        hit = sum(
+            recall_at_k([h["id"] for h in fn(cand[i])], qs[i]["gold_source_ids"], 8)
+            == 1.0
+            for i in idx
+        )
         lines.append(f"| {n} | {hit} / {len(idx)} |")
     out = ROOT / "evals/results/experiments/fusion"
     out.mkdir(parents=True, exist_ok=True)

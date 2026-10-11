@@ -78,3 +78,16 @@ def test_bm25_ranks_by_term_and_loads_text():
     hits = s.search_bm25("what is the apple situation", k=5)
     assert [h["id"] for h in hits] == ["a"]  # 'c' and 'b' have no matching term
     assert hits[0]["text"] == "apple pie recipe" and hits[0]["score"] > 0
+
+
+def test_bm25_index_follows_a_same_size_rebuild():
+    s = PgVectorStore(DSN, table="passages_test")
+    s.init(reset=True)
+    s.upsert([row("a", "apple pie"), row("b", "banana bread")], [vec(0), vec(1)])
+    assert [h["id"] for h in s.search_bm25("apple", k=5)] == ["a"]
+    s.init(
+        reset=True
+    )  # drop and recreate, as ingest does; same number of rows, different text
+    s.upsert([row("a", "cherry tart"), row("b", "date cake")], [vec(0), vec(1)])
+    assert s.search_bm25("apple", k=5) == []
+    assert [h["id"] for h in s.search_bm25("cherry", k=5)] == ["a"]

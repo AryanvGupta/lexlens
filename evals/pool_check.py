@@ -14,9 +14,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "rag-api"))
 
-import app.retrieval.search as S  # noqa: E402
-from app.generation.ask import DEFAULT_K  # noqa: E402
-from app.store.pgvector_store import PgVectorStore  # noqa: E402
+import app.retrieval.search as S
+from app.generation.ask import DEFAULT_K
+from app.store.pgvector_store import PgVectorStore
 
 store = PgVectorStore(os.environ["DATABASE_URL"])
 qs = [json.loads(line) for line in (ROOT / "evals/dataset/questions.jsonl").open()]

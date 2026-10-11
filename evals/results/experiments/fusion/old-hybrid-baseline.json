@@ -1,0 +1,10 @@
+{
+  "note": "hybrid metrics of the old equal-weight RRF over dense + ts_rank, as committed in evals/results/retrieval.json at 8ab1885 (before the BM25 2:1 hybrid replaced it). evals/fusion_experiment.py asserts its hybrid ts_rank 1:1 row equals this.",
+  "n": 44,
+  "hybrid": {
+    "recall@1": 0.6136363636363636,
+    "recall@5": 0.7840909090909091,
+    "recall@10": 0.8636363636363636,
+    "mrr@20": 0.6966946248196249
+  }
+}

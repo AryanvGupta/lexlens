@@ -10,10 +10,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "rag-api"))
 
-from app.metrics import recall_at_k, reciprocal_rank, section_key  # noqa: E402
-from app.retrieval.rewrite import REWRITE_MODEL, rewrite_query  # noqa: E402
-from app.retrieval.search import search  # noqa: E402
-from app.store.pgvector_store import PgVectorStore  # noqa: E402
+from app.metrics import recall_at_k, reciprocal_rank, section_key
+from app.retrieval.rewrite import REWRITE_MODEL, rewrite_query
+from app.retrieval.search import search
+from app.store.pgvector_store import PgVectorStore
 
 MODES = ["hybrid", "rerank", "rewrite"]
 DEPTH = 30
@@ -59,9 +59,11 @@ def main() -> None:
     q33 = next(q for q in qs if q["id"] == "q033")
     lines += [
         "",
-        f"q033 gold {q33['gold_source_ids']}: rank hybrid={gold_rank(ids['hybrid']['q033'], q33['gold_source_ids'])}, "
-        f"rerank={gold_rank(ids['rerank']['q033'], q33['gold_source_ids'])}, "
-        f"rewrite={gold_rank(ids['rewrite']['q033'], q33['gold_source_ids'])} (None = outside top {DEPTH}).",
+        (
+            f"q033 gold {q33['gold_source_ids']}: rank hybrid={gold_rank(ids['hybrid']['q033'], q33['gold_source_ids'])}, "
+            f"rerank={gold_rank(ids['rerank']['q033'], q33['gold_source_ids'])}, "
+            f"rewrite={gold_rank(ids['rewrite']['q033'], q33['gold_source_ids'])} (None = outside top {DEPTH})."
+        ),
         f"q033 rewrite text: `{rewrites['q033']}`",
         "",
     ]

@@ -33,12 +33,17 @@ def dump(out: str) -> None:
                 "id": q["id"],
                 "question": q["question"],
                 "hits": [
-                    {"id": h["id"], "text": h["text"], "source": {"title": h["source"]["title"]}}
+                    {
+                        "id": h["id"],
+                        "text": h["text"],
+                        "source": {"title": h["source"]["title"]},
+                    }
                     for h in hits
                 ],
             }
         )
-    json.dump(rows, open(out, "w"))
+    with open(out, "w") as f:
+        json.dump(rows, f)
     print(f"wrote {len(rows)} questions to {out}")
 
 
@@ -62,7 +67,8 @@ def pearson(a, b):
 def compare(path: str, opt: str, out: str | None) -> None:
     import app.retrieval.rerank as rr
 
-    data = json.load(open(path))
+    with open(path) as f:
+        data = json.load(f)
     sc = {}
     for label, o in (("fp32", ""), (opt, opt)):
         rr.RERANK_OPT = o
@@ -70,13 +76,18 @@ def compare(path: str, opt: str, out: str | None) -> None:
         m = rr.model()
         if o == "int8":
             n = sum("quantized.dynamic" in type(x).__module__ for x in m.modules())
-            assert n > 0, f"{o}: no dynamic-quantized modules, the option did not take effect"
+            assert n > 0, (
+                f"{o}: no dynamic-quantized modules, the option did not take effect"
+            )
             print(f"{o}: {n} dynamic-quantized Linear modules")
         sc[label] = [
             [
                 float(x)
                 for x in m.predict(
-                    [(d["question"], f"{h['source']['title']}\n{h['text']}") for h in d["hits"]],
+                    [
+                        (d["question"], f"{h['source']['title']}\n{h['text']}")
+                        for h in d["hits"]
+                    ],
                     **({"batch_size": 8} if o else {}),  # same call as rerank()
                 )
             ]
@@ -86,8 +97,11 @@ def compare(path: str, opt: str, out: str | None) -> None:
     for d, a, b in zip(data, sc["fp32"], sc[opt]):
         ids = [h["id"] for h in d["hits"]]
 
-        def top(s):
-            return [ids[i] for i in sorted(range(len(ids)), key=lambda i: (-s[i], ids[i]))[:K]]
+        def top(s, ids=ids):
+            return [
+                ids[i]
+                for i in sorted(range(len(ids)), key=lambda i: (-s[i], ids[i]))[:K]
+            ]
 
         ta, tb = top(a), top(b)
         if set(ta) != set(tb):
@@ -112,11 +126,16 @@ def compare(path: str, opt: str, out: str | None) -> None:
     print(f"questions: {n}")
     print(f"top-{K} id set differs: {len(set_diff)} {' '.join(set_diff)}")
     print(f"top-1 differs: {len(top1_diff)} {' '.join(top1_diff)}")
-    print(f"mean Spearman {sum(r['spearman'] for r in rows) / n:.4f}  min {min(r['spearman'] for r in rows):.4f}")
-    print(f"mean Pearson  {sum(r['pearson'] for r in rows) / n:.4f}  min {min(r['pearson'] for r in rows):.4f}")
+    print(
+        f"mean Spearman {sum(r['spearman'] for r in rows) / n:.4f}  min {min(r['spearman'] for r in rows):.4f}"
+    )
+    print(
+        f"mean Pearson  {sum(r['pearson'] for r in rows) / n:.4f}  min {min(r['pearson'] for r in rows):.4f}"
+    )
     print(f"max |score diff| overall {max(r['max_abs_diff'] for r in rows):.3f}")
     if out:
-        json.dump(rows, open(out, "w"), indent=1)
+        with open(out, "w") as f:
+            json.dump(rows, f, indent=1)
 
 
 if __name__ == "__main__":
