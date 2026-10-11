@@ -1,15 +1,21 @@
-id,judge_faithful,claude_verdict,note
-q001,True,faithful,"All four factors, the 'shall include' wording and the unpublished-work sentence are in the cited text."
-q004,True,faithful,"$750/$30,000, willful up to $150,000, reduction to $200, and the remittance cases are all in 17:504."
-q007,True,faithful,"109(a), the 12-month restored-copyright window, the rental/lease/loan limit and 109(b)(4) are all in the cited chunks."
-q010,True,faithful,"Categories, compilations and derivative works, the idea/method exclusion and the US-government exclusion are all supported."
-q013,True,faithful,3-year civil limit (17:507(b)) and the 28:1498 three-year limit with tolling are supported.
-q016,True,faithful,Restates 35:103 accurately.
-q019,True,faithful,"271(a) to (c), (f)(1) and (2), (g) and (h) are all in the cited chunks."
-q022,True,faithful,"Each provisional-application claim, including no priority benefit from other applications (111(b)(7)), is in the cited chunks."
-q025,True,faithful,"35:285 and the 28:1498(a) fee rules, including the 10-year proviso, are supported."
-q028,True,faithful,"Faithful with a minor imprecision: 1445(b) makes carrier claims nonremovable unless the amount exceeds $10,000, so 'under $10,000' leaves out exactly $10,000."
-q031,True,faithful,"1291, 1292(a) and (b) including 'within ten days', and 1295(a)(1) are supported."
-q035,True,faithful,"Every listed exception is in 11:523(a)(9) to (17), 523(c) or 11:1228(c). The remark that paragraphs (1) to (8) are missing is true of what was retrieved (only 523:3, 4, 7)."
-q039,True,faithful,"548(a)(1), (a)(2), (b), (c) and (e) (10 years, self-settled trust) are in the cited chunks."
-q042,True,faithful,"Priorities (1) to (6), (9), (10) and 726(b) are supported. Saying (6)(B), (7) and (8) are missing is true of what was retrieved: chunk 507:3, which holds (7) and (8), was not retrieved. The answer is incomplete because of retrieval, not unfaithful."
+run,id,judge_faithful,claude_verdict,note
+dev default (committed run),q001,True,faithful,"All four factors, the 'shall include' wording and the unpublished-work sentence are in the cited text."
+dev default (committed run),q004,True,faithful,"$750/$30,000, willful up to $150,000, reduction to $200, and the remittance cases are all in 17:504."
+dev default (committed run),q007,True,faithful,"109(a), the 12-month restored-copyright window, the rental/lease/loan limit and 109(b)(4) are all in the cited chunks."
+dev default (committed run),q010,True,faithful,"Categories, compilations and derivative works, the idea/method exclusion and the US-government exclusion are all supported."
+dev default (committed run),q013,True,faithful,3-year civil limit (17:507(b)) and the 28:1498 three-year limit with tolling are supported.
+dev default (committed run),q016,True,faithful,Restates 35:103 accurately.
+dev default (committed run),q019,True,faithful,"271(a) to (c), (f)(1) and (2), (g) and (h) are all in the cited chunks."
+dev default (committed run),q022,True,faithful,"Each provisional-application claim, including no priority benefit from other applications (111(b)(7)), is in the cited chunks."
+dev default (committed run),q025,True,faithful,"35:285 and the 28:1498(a) fee rules, including the 10-year proviso, are supported."
+dev default (committed run),q028,True,faithful,"Faithful with a minor imprecision: 1445(b) makes carrier claims nonremovable unless the amount exceeds $10,000, so 'under $10,000' leaves out exactly $10,000."
+dev default (committed run),q031,True,faithful,"1291, 1292(a) and (b) including 'within ten days', and 1295(a)(1) are supported."
+dev default (committed run),q035,True,faithful,"Every listed exception is in 11:523(a)(9) to (17), 523(c) or 11:1228(c). The remark that paragraphs (1) to (8) are missing is true of what was retrieved (only 523:3, 4, 7)."
+dev default (committed run),q039,True,faithful,"548(a)(1), (a)(2), (b), (c) and (e) (10 years, self-settled trust) are in the cited chunks."
+dev default (committed run),q042,True,faithful,"Priorities (1) to (6), (9), (10) and 726(b) are supported. Saying (6)(B), (7) and (8) are missing is true of what was retrieved: chunk 507:3, which holds (7) and (8), was not retrieved. The answer is incomplete because of retrieval, not unfaithful."
+variance rerun 1,q025,False,faithful,"Judge false positive. Every substantive claim (35:285 fees in exceptional cases; 28:1498(a) fees for an independent inventor, nonprofit or entity with at most 500 employees; the substantial-justification and special-circumstances exceptions; the 10-year proviso where stated) is in the cited text. The judge objects only that the section numbers are not in the passage text: they come from the passage id and source title, which the judge is not shown."
+variance rerun 2,q025,False,faithful,"Judge false positive. Every substantive claim (35:285 fees in exceptional cases; 28:1498(a) fees for an independent inventor, nonprofit or entity with at most 500 employees; the substantial-justification and special-circumstances exceptions; the 10-year proviso where stated) is in the cited text. The judge objects only that the section numbers are not in the passage text: they come from the passage id and source title, which the judge is not shown."
+variance rerun 3,q025,False,faithful,"Judge false positive. Every substantive claim (35:285 fees in exceptional cases; 28:1498(a) fees for an independent inventor, nonprofit or entity with at most 500 employees; the substantial-justification and special-circumstances exceptions; the 10-year proviso where stated) is in the cited text. The judge objects only that the section numbers are not in the passage text: they come from the passage id and source title, which the judge is not shown."
+hybrid k=12 (experiment),q025,False,faithful,"Judge false positive. Every substantive claim (35:285 fees in exceptional cases; 28:1498(a) fees for an independent inventor, nonprofit or entity with at most 500 employees; the substantial-justification and special-circumstances exceptions; the 10-year proviso where stated) is in the cited text. The judge objects only that the section numbers are not in the passage text: they come from the passage id and source title, which the judge is not shown."
+rerank k=12 int8 (opt-in experiment),q025,False,unverified,"The claims are true. The judge saw only the 28:1498 passage, so the 35:285 passage was probably retrieved but not cited; whether that is the case cannot be confirmed because the cited ids are not saved in this CSV. Likely a citation-completeness flag."
+rerank k=12 int8 (opt-in experiment),q004,False,judge correct,"The added remark that lower caps apply in Copyright Claims Board proceedings is true (17:1504 caps statutory damages at $15,000 or $7,500 per work, below $30,000) but it is not in the cited passage (17:504). A true claim that is not supported by the cited text, which is what the judge's rule tests."
