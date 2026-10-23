@@ -114,6 +114,20 @@ To inspect the tools without an AI client:
 cd mcp-server && npx @modelcontextprotocol/inspector node dist/index.js
 ```
 
+## Observability
+
+Both services expose Prometheus metrics, and one request id follows a tool call end to end.
+
+| Endpoint | What it serves |
+|---|---|
+| `rag-api` `GET /metrics` | `lexlens_http_requests_total` and `lexlens_http_request_seconds` by method, route template and status; `lexlens_searches_total` by retrieval mode; `lexlens_asks_total` by `answered` or `refused` |
+| `mcp-server` `GET /metrics` (HTTP transport) | `lexlens_mcp_tool_calls_total` and `lexlens_mcp_tool_seconds` by tool and outcome; `lexlens_rag_client_seconds` for calls to rag-api; default Node process metrics |
+
+- Label values are bounded (route templates, the mode enum, tool names), so callers cannot create new time series. Unknown paths share one `unmatched` label.
+- The MCP server reuses an inbound `x-request-id` (or creates one), returns it in the response and forwards it to rag-api, whose JSON access log already records it. Search the logs for one id to follow a tool call across both services.
+- `/metrics`, like `/healthz`, is not authenticated even when `MCP_AUTH_TOKEN` is set. Reach it from inside the cluster only. The pod templates carry `prometheus.io/*` scrape annotations.
+- Not done: tracing (OpenTelemetry), alert rules and dashboards.
+
 ## Tests and evals
 
 ```bash

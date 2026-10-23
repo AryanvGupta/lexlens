@@ -8,7 +8,7 @@ from contextlib import asynccontextmanager
 
 import psycopg
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel
 
 from app.config import DATABASE_URL
@@ -16,6 +16,7 @@ from app.generation.ask import DEFAULT_K
 from app.generation.ask import ask as run_ask
 from app.generation.llm import anthropic_call
 from app.ingest.fetch import sources as corpus_sources
+from app.obs import ASKS, SEARCHES, record_request, render
 from app.retrieval.search import Mode
 from app.retrieval.search import search as run_search
 from app.store.pgvector_store import PgVectorStore
@@ -51,10 +52,13 @@ async def access_log(request: Request, call_next):
     start = time.perf_counter()
     response = await call_next(request)
     response.headers["x-request-id"] = rid
+    elapsed = time.perf_counter() - start
+    record_request(request, response.status_code, elapsed)
     if request.url.path not in (
         "/health",
         "/ready",
-    ):  # keep probe noise out of the logs
+        "/metrics",
+    ):  # keep probe and scrape noise out of the logs
         log.info(
             json.dumps(
                 {
@@ -63,7 +67,7 @@ async def access_log(request: Request, call_next):
                     "method": request.method,
                     "path": request.url.path,
                     "status": response.status_code,
-                    "ms": round((time.perf_counter() - start) * 1000, 1),
+                    "ms": round(elapsed * 1000, 1),
                 }
             )
         )
@@ -98,6 +102,12 @@ def ready():
     return {"status": "ready"}
 
 
+@app.get("/metrics")
+def metrics():
+    body, content_type = render()
+    return Response(body, media_type=content_type)
+
+
 @app.get("/sources")
 def sources():
     return {"sources": corpus_sources()}
@@ -106,7 +116,9 @@ def sources():
 @app.post("/search")
 def search(req: SearchRequest):
     store = PgVectorStore(DATABASE_URL)
-    return {"results": run_search(store, req.query, req.k, req.mode)}
+    results = run_search(store, req.query, req.k, req.mode)
+    SEARCHES.labels(req.mode).inc()
+    return {"results": results}
 
 
 class AskRequest(BaseModel):
@@ -118,4 +130,6 @@ class AskRequest(BaseModel):
 def ask(req: AskRequest):
     if not os.environ.get("ANTHROPIC_API_KEY"):
         raise HTTPException(503, "ANTHROPIC_API_KEY is not set")
-    return run_ask(PgVectorStore(DATABASE_URL), anthropic_call, req.question, req.k)
+    out = run_ask(PgVectorStore(DATABASE_URL), anthropic_call, req.question, req.k)
+    ASKS.labels("refused" if out["refused"] else "answered").inc()
+    return out

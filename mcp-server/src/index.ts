@@ -8,9 +8,10 @@ import { registerPrimitives } from "./primitives.js";
 import { registerSqlTools } from "./tools/sqlTools.js";
 import { SampleDb, type Sql } from "./sql/db.js";
 import { registerSearchLegal } from "./tools/searchLegal.js";
+import { instrumentTools } from "./metrics.js";
 
 export function buildServer(rag: Rag, sql: Sql = new SampleDb(undefined)): McpServer {
-  const server = new McpServer({ name: "lexlens", version: "0.1.0" });
+  const server = instrumentTools(new McpServer({ name: "lexlens", version: "0.1.0" }));
   registerSearchLegal(server, rag);
   registerAskLegal(server, rag);
   registerSqlTools(server, sql);

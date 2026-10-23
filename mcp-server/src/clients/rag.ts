@@ -1,3 +1,6 @@
+import { ragSeconds } from "../metrics.js";
+import { currentRequestId } from "../requestContext.js";
+
 export interface Passage {
   id: string;
   text: string;
@@ -40,16 +43,20 @@ export class RagClient implements Rag {
 
   private async request<T>(method: "GET" | "POST", path: string, body: unknown, timeoutMs: number): Promise<T> {
     let res: Response;
+    const end = ragSeconds.startTimer({ path });
+    const requestId = currentRequestId();
     try {
       res = await this.fetchFn(`${this.baseUrl}${path}`, {
         method,
-        headers: { "content-type": "application/json" },
+        headers: { "content-type": "application/json", ...(requestId ? { "x-request-id": requestId } : {}) },
         body: body === undefined ? undefined : JSON.stringify(body),
         signal: AbortSignal.timeout(timeoutMs),
       });
     } catch {
+      end({ outcome: "error" });
       throw new RagError("rag-api is unreachable or timed out. Is it running (RAG_API_URL)?");
     }
+    end({ outcome: res.ok ? "ok" : "error" });
     if (!res.ok) {
       const detail = await res.json().then((j) => j?.detail, () => undefined);
       throw new RagError(
